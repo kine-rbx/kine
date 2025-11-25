@@ -1,0 +1,30 @@
+name = "kine/kine"
+version = "0.1.0"
+private = true
+license = "MIT"
+description = "A Roblox Studio plugin suite for animation and rig creation"
+repository = "https://github.com/kine-rbx/kine"
+
+[target]
+environment = "roblox"
+
+[dev_dependencies]
+scripts = { name = "pesde/scripts_rojo", version = "^0.2.0", target = "lune" }
+rojo = { name = "pesde/rojo", version = "^7.6.1", target = "lune" }
+
+[dependencies]
+fluid = { wally = "ffrostfall/fluid", version = "^0.6.4" }
+
+[scripts]
+roblox_sync_config_generator = ".pesde/scripts/roblox_sync_config_generator.luau"
+sourcemap_generator = ".pesde/scripts/sourcemap_generator.luau"
+
+[engines]
+pesde = "^0.7.0"
+lune = "^0.10.2"
+
+[indices]
+default = "https://github.com/pesde-pkg/index"
+
+[wally_indices]
+default = "https://github.com/UpliftGames/wally-index"
