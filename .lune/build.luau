@@ -4,9 +4,7 @@ local fs = require("@lune/fs")
 local RELEASE_DIR = "release"
 
 local function build(): ()
-	if not fs.isDir(RELEASE_DIR) then
-		fs.writeDir(RELEASE_DIR)
-	end
+	fs.writeDir(RELEASE_DIR)
 
 	local result = process.exec("rojo", {
 		"build", "--output", `{RELEASE_DIR}/Kine.rbxm`

@@ -6,13 +6,13 @@ local Signal = require(PluginRoot.Utility.Signal)
 
 type Signal<T...> = Signal.Signal<T...>
 
-type PluginKey =
-	| "Editor"
-
 type PluginButtonConfig = {
 	tooltip: string,
 	icon: string
 }
+
+export type PluginKey =
+	| "Editor"
 
 export type PluginButton = {
 	_instance: PluginToolbarButton,
@@ -31,10 +31,15 @@ local BUTTON_CONFIG: {[PluginKey]: PluginButtonConfig} = {
 local TOOLBAR_NAME = "Kine"
 local SETTING_FORMAT = "KineConfig-%s" :: "KineConfig-%s"
 
+local function reset(self: PluginButton): ()
+	self._instance.Enabled = false
+	self._instance.Enabled = true
+end
+
 local Plugin = {}
 local plugin: Plugin
 
-Plugin.buttons = {} :: {[PluginKey]: PluginButton}
+Plugin.buttons = {} :: {[PluginKey | string]: PluginButton}
 
 function Plugin._initialize(_plugin: Plugin): ()
 	if plugin then return end
@@ -54,10 +59,7 @@ function Plugin._initialize(_plugin: Plugin): ()
 			_instance = button,
 
 			onClick = onClick,
-			reset = function()
-				button.Enabled = false
-				button.Enabled = true
-			end
+			reset = reset
 		}
 	end
 end
