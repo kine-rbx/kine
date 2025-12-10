@@ -2,8 +2,11 @@ local process = require("@lune/process")
 local fs = require("@lune/fs")
 local roblox = require("@lune/roblox")
 
-local PLUGIN_RELEASE_PATH = "release/Kine.rbxm"
-local PLUGIN_INSTALL_PATH = roblox.studioPluginPath() .. "\\Kine.rbxm"
+local STUDIO_PLUGIN_PATH = roblox.studioPluginPath():gsub("\\", "/")
+
+local RELEASE_DIR = "release"
+local PLUGIN_RELEASE_PATH = `{RELEASE_DIR}/Kine.rbxm`
+local PLUGIN_INSTALL_PATH = `{STUDIO_PLUGIN_PATH}/Kine.rbxm`
 
 local function uninstall()
 	if fs.isFile(PLUGIN_INSTALL_PATH) then
