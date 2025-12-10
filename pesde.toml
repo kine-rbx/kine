@@ -13,7 +13,7 @@ scripts = { name = "pesde/scripts_rojo", version = "^0.2.0", target = "lune" }
 rojo = { name = "pesde/rojo", version = "^7.6.1", target = "lune" }
 
 [dependencies]
-fluid = { wally = "ffrostfall/fluid", version = "^0.6.4" }
+fluid = { repo = "literallywize/fluid", rev = "ed8ef5c85780949f8be73af7efff1bd78a09f2be" }
 
 [scripts]
 roblox_sync_config_generator = ".pesde/scripts/roblox_sync_config_generator.luau"
