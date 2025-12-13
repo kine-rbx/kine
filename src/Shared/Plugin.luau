@@ -7,18 +7,18 @@ local Signal = require(PluginRoot.Utility.Signal)
 type Signal<T...> = Signal.Signal<T...>
 
 type PluginButtonConfig = {
-	tooltip: string,
-	icon: string
+	read tooltip: string,
+	read icon: string
 }
 
 export type PluginKey =
 	| "Editor"
 
 export type PluginButton = {
-	_instance: PluginToolbarButton,
+	read _instance: PluginToolbarButton,
 
-	onClick: Signal<>,
-	reset: () -> ()
+	read onClick: Signal<>,
+	read reset: () -> ()
 }
 
 local BUTTON_CONFIG: {[PluginKey]: PluginButtonConfig} = {
