@@ -16,7 +16,7 @@ local function setup(destroy: () -> ()): ()
 	assert(activeGui)
 
 	local window = {
-		position = source(vector.create(512, 512)),
+		position = source(vector.create(activeGui.AbsoluteSize.X, activeGui.AbsoluteSize.Y)),
 		size = source(Config.WINDOWS["EDITOR"].DEFAULT_SIZE),
 		open = source(true)
 	}
