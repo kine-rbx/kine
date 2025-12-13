@@ -27,7 +27,6 @@ local function setup(destroy: () -> ()): ()
 			size = window.size,
 			open = window.open
 		})
-
 		return {frame}
 	end
 
@@ -51,11 +50,9 @@ return function(uiFolder: Folder): ()
 
 	local connection = pluginButton.onClick:connect(function()
 		if activeGui and activeGui.Parent then
-			task.defer(pluginButton.reset, pluginButton)
-			if destroy ~= nil then
-				task.spawn(destroy)
-				destroy = nil
-			end
+			pluginButton.reset()
+			if destroy then task.spawn(destroy) end
+			destroy = nil
 		else
 			activeGui = create("ScreenGui") {
 				Name = "Editor",

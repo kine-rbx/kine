@@ -18,7 +18,7 @@ export type PluginButton = {
 	_instance: PluginToolbarButton,
 
 	onClick: Signal<>,
-	reset: (self: PluginButton) -> ()
+	reset: () -> ()
 }
 
 local BUTTON_CONFIG: {[PluginKey]: PluginButtonConfig} = {
@@ -31,9 +31,9 @@ local BUTTON_CONFIG: {[PluginKey]: PluginButtonConfig} = {
 local TOOLBAR_NAME = "Kine"
 local SETTING_FORMAT = "KineConfig-%s" :: "KineConfig-%s"
 
-local function reset(self: PluginButton): ()
-	self._instance.Enabled = false
-	self._instance.Enabled = true
+local function reset(button: PluginToolbarButton): ()
+	button.Enabled = false
+	button.Enabled = true
 end
 
 local Plugin = {}
@@ -59,7 +59,9 @@ function Plugin._initialize(_plugin: Plugin): ()
 			_instance = button,
 
 			onClick = onClick,
-			reset = reset
+			reset = function()
+				task.defer(reset, button)
+			end
 		}
 	end
 end
