@@ -17,16 +17,16 @@ local function setup(destroy: () -> ()): ()
 
 	local window = {
 		position = source(vector.create(512, 512)),
-		size = source(vector.create(480, 256)),
+		size = source(Config.WINDOWS["EDITOR"].DEFAULT_SIZE),
 		open = source(true)
 	}
 
 	local function ui(): {Instance}
-		local frame = Window({
+		local frame = Window {
 			position = window.position,
 			size = window.size,
 			open = window.open
-		})
+		}
 		return {frame}
 	end
 
@@ -34,7 +34,7 @@ local function setup(destroy: () -> ()): ()
 
 	cleanup(function()
 		window.open(false)
-		task.wait(Config.WINDOW.TRANSITION.TIME)
+		task.wait(Config.WINDOWS.TRANSITION.TIME)
 		if activeGui then activeGui:Destroy() end
 	end)
 end
