@@ -6,6 +6,7 @@ local FONTS = {
 }
 
 return table.freeze {
+	FONTS = FONTS,
 	TEXT_SIZE = {
 		["BODY"] = 12,
 		["NOTE"] = 10,
