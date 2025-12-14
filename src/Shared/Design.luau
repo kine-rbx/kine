@@ -13,6 +13,7 @@ return table.freeze {
 	BUTTON = {
 		DEFAULT_WIDTH = 16,
 		DEFAULT_HEIGHT = 12,
+		MARGIN = vector.create(2, 2)
 	},
 	WINDOW_TRANSITION = {
 		TIME = 0.18,
