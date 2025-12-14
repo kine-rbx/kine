@@ -2,7 +2,7 @@
 --!optimize 2
 
 local PluginRoot = script:FindFirstAncestor("Kine")
-local Config = require(script.Parent.Parent.Shared.Config)
+local Design = require(PluginRoot.Shared.Design)
 local Plugin = require(PluginRoot.Shared.Plugin)
 
 local fluid = require(PluginRoot.Packages.fluid)
@@ -17,7 +17,7 @@ local function setup(destroy: () -> ()): ()
 
 	local window = {
 		position = source(vector.create(activeGui.AbsoluteSize.X, activeGui.AbsoluteSize.Y)),
-		size = source(Config.WINDOWS["EDITOR"].DEFAULT_SIZE),
+		size = source(Design.WINDOWS["EDITOR"].DEFAULT_SIZE),
 		open = source(true)
 	}
 
@@ -34,7 +34,7 @@ local function setup(destroy: () -> ()): ()
 
 	cleanup(function()
 		window.open(false)
-		task.wait(Config.WINDOWS.TRANSITION.TIME)
+		task.wait(Design.WINDOW_TRANSITION.TIME)
 		if activeGui then activeGui:Destroy() end
 	end)
 end

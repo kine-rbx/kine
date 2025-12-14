@@ -2,7 +2,7 @@
 --!optimize 2
 
 local PluginRoot = script:FindFirstAncestor("Kine")
-local Config = require(PluginRoot.Shared.Config)
+local Design = require(PluginRoot.Shared.Design)
 
 local fluid = require(PluginRoot.Packages.fluid)
 local create, effect, tween = fluid.create, fluid.effect, fluid.tween
@@ -15,29 +15,29 @@ return function(props: {
 	props.open(false)
 
 	local scale, scaleControls = tween(function()
-		return props.open() and 1 or Config.WINDOWS.TRANSITION.SCALE
-	end, Config.WINDOWS.TRANSITION.TWEEN_INFO["IN"])
+		return props.open() and 1 or Design.WINDOW_TRANSITION.SCALE
+	end, Design.WINDOW_TRANSITION.TWEEN_INFO["IN"])
 
 	local position, positionControls = tween(function()
 		local target = props.position()
 		if props.open() then
 			return UDim2.fromOffset(target.x, target.y)
 		else
-			return UDim2.fromOffset(target.x, target.y + Config.WINDOWS.TRANSITION.OFFSET)
+			return UDim2.fromOffset(target.x, target.y + Design.WINDOW_TRANSITION.OFFSET)
 		end
-	end, Config.WINDOWS.TRANSITION.TWEEN_INFO["IN"])
+	end, Design.WINDOW_TRANSITION.TWEEN_INFO["IN"])
 
 	local transparency, transparencyControls = tween(function()
 		return props.open() and 0 or 1
-	end, Config.WINDOWS.TRANSITION.TWEEN_INFO["IN"])
+	end, Design.WINDOW_TRANSITION.TWEEN_INFO["IN"])
 
 	props.open(true)
 
 	effect(function()
 		if not props.open() then
-			scaleControls({tween_info = Config.WINDOWS.TRANSITION.TWEEN_INFO["OUT"]})
-			positionControls({tween_info = Config.WINDOWS.TRANSITION.TWEEN_INFO["OUT_POSITION"]})
-			transparencyControls({tween_info = Config.WINDOWS.TRANSITION.TWEEN_INFO["OUT"]})
+			scaleControls({tween_info = Design.WINDOW_TRANSITION.TWEEN_INFO["OUT"]})
+			positionControls({tween_info = Design.WINDOW_TRANSITION.TWEEN_INFO["OUT_POSITION"]})
+			transparencyControls({tween_info = Design.WINDOW_TRANSITION.TWEEN_INFO["OUT"]})
 		end
 	end)
 
