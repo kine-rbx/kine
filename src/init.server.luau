@@ -1,5 +1,4 @@
 --!strict
---!optimize 2
 
 local CoreGui = game:GetService("CoreGui")
 

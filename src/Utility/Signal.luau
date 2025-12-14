@@ -1,6 +1,5 @@
 --!strict
 --!native
---!optimize 2
 
 export type Signal<T...> = {
 	_head: Connection<T...>?,

@@ -1,5 +1,4 @@
 --!strict
---!optimize 2
 
 local PluginRoot = script:FindFirstAncestor("Kine")
 local Design = require(PluginRoot.Shared.Design)

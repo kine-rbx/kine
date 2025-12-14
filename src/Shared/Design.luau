@@ -1,5 +1,4 @@
 --!strict
---!optimize 2
 
 local FONTS = {
 	["DEFAULT"] = Font.fromId(12187365364), -- Inter
