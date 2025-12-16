@@ -11,11 +11,11 @@ local Window = require(PluginRoot.Components.Window)
 
 local activeGui: ScreenGui? = nil
 
-local function setup(destroy: () -> ()): ()
+local function setup(): ()
 	assert(activeGui)
 
 	local window = {
-		position = source(vector.create(activeGui.AbsoluteSize.X, activeGui.AbsoluteSize.Y)),
+		position = source(vector.create(activeGui.AbsoluteSize.X, activeGui.AbsoluteSize.Y) // 2),
 		size = source(Design.WINDOWS["EDITOR"].DEFAULT_SIZE),
 		open = source(true)
 	}
@@ -34,7 +34,7 @@ local function setup(destroy: () -> ()): ()
 	cleanup(function()
 		window.open(false)
 		task.wait(Design.WINDOW_TRANSITION.TIME)
-		if activeGui then activeGui:Destroy() end
+		if activeGui and activeGui.Parent then activeGui:Destroy() end
 	end)
 end
 
