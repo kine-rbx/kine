@@ -5,12 +5,13 @@ local CoreGui = game:GetService("CoreGui")
 local PluginRoot = script
 local Config = require(PluginRoot.Shared.Config)
 local Plugin = require(PluginRoot.Shared.Plugin)
+local Themes = require(PluginRoot.Shared.Themes)
 
 local fluid = require(PluginRoot.Packages.fluid)
 local root, cleanup = fluid.root, fluid.cleanup
 
-local plugins: {(uiFolder: Folder) -> ()} = {
-	require(PluginRoot.Plugins.Editor)
+local plugins: {ModuleScript} = {
+	PluginRoot.Plugins.Editor
 }
 
 local uiFolder: Folder
@@ -20,8 +21,9 @@ local function setup(): ()
 		if uiFolder.Parent ~= nil then uiFolder:Destroy() end
 	end)
 
-	for _, plugin in plugins do
-		plugin(uiFolder)
+	for _, module in plugins do
+		local init = require(module) :: (uiFolder: Folder) -> ()
+		init(uiFolder)
 	end
 end
 
@@ -56,6 +58,7 @@ uiFolder = CoreGui:FindFirstChild(Config.UI_FOLDER_NAME) :: Folder
 if uiFolder then uiFolder:Destroy() end
 
 Plugin._initialize(plugin)
+Themes._initialize()
 initialize()
 
 plugin.Unloading:Once(function()
