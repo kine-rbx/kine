@@ -2,58 +2,77 @@
 
 local PluginRoot = script:FindFirstAncestor("Kine")
 local Design = require(PluginRoot.Shared.Design)
+local Themes = require(PluginRoot.Shared.Themes)
 
 local fluid = require(PluginRoot.Packages.fluid)
-local create, effect, tween = fluid.create, fluid.effect, fluid.tween
+local source, effect, create, tween = fluid.source, fluid.effect, fluid.create, fluid.tween
+
+local Border = require(PluginRoot.Components.Decorators.Border)
+
+type Source<T> = fluid.Source<T>
+
+local TRANSITION = Design.WINDOW.TRANSITION
 
 return function(props: {
-	position: () -> vector,
-	size: () -> vector,
-	open: () -> boolean
+	Open: Source<boolean>,
+
+	Position: Source<vector>,
+	Size: Source<vector>,
 })
-	props.open(false)
+	local open = source(false)
 
 	local scale, scaleControls = tween(function()
-		return props.open() and 1 or Design.WINDOW_TRANSITION.SCALE
-	end, Design.WINDOW_TRANSITION.TWEEN_INFO["IN"])
-
-	local position, positionControls = tween(function()
-		local target = props.position()
-		if props.open() then
-			return UDim2.fromOffset(target.x, target.y)
-		else
-			return UDim2.fromOffset(target.x, target.y + Design.WINDOW_TRANSITION.OFFSET)
-		end
-	end, Design.WINDOW_TRANSITION.TWEEN_INFO["IN"])
+		return open() and 1 or TRANSITION.SCALE
+	end, TRANSITION.TWEEN_INFO["IN"])
 
 	local transparency, transparencyControls = tween(function()
-		return props.open() and 0 or 1
-	end, Design.WINDOW_TRANSITION.TWEEN_INFO["IN"])
+		return open() and 0 or 1
+	end, TRANSITION.TWEEN_INFO["IN"])
 
-	props.open(true)
+	open(true)
+
+	local position, positionControls = tween(function()
+		local target = props.Position()
+		if open() then
+			return UDim2.fromOffset(target.x, target.y)
+		else
+			return UDim2.fromOffset(target.x, target.y + TRANSITION.OFFSET)
+		end
+	end, TRANSITION.TWEEN_INFO["IN"])
 
 	effect(function()
-		if not props.open() then
-			scaleControls({tween_info = Design.WINDOW_TRANSITION.TWEEN_INFO["OUT"]})
-			positionControls({tween_info = Design.WINDOW_TRANSITION.TWEEN_INFO["OUT_POSITION"]})
-			transparencyControls({tween_info = Design.WINDOW_TRANSITION.TWEEN_INFO["OUT"]})
+		open(props.Open())
+		if not open() then
+			scaleControls({tween_info = TRANSITION.TWEEN_INFO["OUT"]})
+			transparencyControls({tween_info = TRANSITION.TWEEN_INFO["OUT"]})
+			positionControls({tween_info = TRANSITION.TWEEN_INFO["OUT_POSITION"]})
 		end
 	end)
 
 	return create("CanvasGroup") {
 		Name = "Window",
+
+		Active = true,
+
 		AnchorPoint = Vector2.new(0.5, 0.5),
-
-		GroupTransparency = transparency,
-
 		Position = position,
 		Size = function()
-			local target = props.size()
+			local target = props.Size()
 			return UDim2.fromOffset(target.x, target.y)
 		end,
 
+		BackgroundColor3 = Themes.colors.Background,
+		BackgroundTransparency = Design.WINDOW.TRANSPARENCY,
+		BorderSizePixel = 0,
+
+		GroupTransparency = transparency,
+
 		create("UIScale") {
 			Scale = scale
-		}
+		},
+		create("UICorner") {
+			CornerRadius = UDim.new(0, Design.WINDOW.ROUNDING)
+		},
+		Border()
 	}
 end
