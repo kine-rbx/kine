@@ -3,45 +3,95 @@
 local PluginRoot = script:FindFirstAncestor("Kine")
 local Design = require(PluginRoot.Shared.Design)
 local Plugin = require(PluginRoot.Shared.Plugin)
+local Signal = require(PluginRoot.Utility.Signal)
 
 local fluid = require(PluginRoot.Packages.fluid)
-local root, create, source, cleanup, mount = fluid.root, fluid.create, fluid.source, fluid.cleanup, fluid.mount
+local root, source, effect, create, cleanup, mount = fluid.root, fluid.source, fluid.effect, fluid.create, fluid.cleanup, fluid.mount
 
 local Window = require(PluginRoot.Components.Window)
+local TitleBar = require(PluginRoot.Components.TitleBar)
+
+local pluginButton = Plugin.buttons["Editor"]
 
 local activeGui: ScreenGui? = nil
+
+local destroy: () -> ()? = nil
+local window = {
+	open = source(true),
+	minimized = source(false),
+
+	position = source(vector.create(math.huge, 0)),
+	size = source(Design.WINDOWS["EDITOR"].SIZE_DEFAULT),
+
+	requestClose = Signal.new(),
+	requestMinimize = Signal.new()
+}
+
+type Signal<T...> = Signal.Signal<T...>
+
+local function die(): ()
+	if destroy then task.spawn(destroy) end
+	destroy = nil
+end
 
 local function setup(): ()
 	assert(activeGui)
 
-	local window = {
-		position = source(vector.create(activeGui.AbsoluteSize.X, activeGui.AbsoluteSize.Y) // 2),
-		size = source(Design.WINDOWS["EDITOR"].DEFAULT_SIZE),
-		open = source(true)
-	}
+	window.open(true)
+	window.minimized(false)
+
+	if window.position().x == math.huge then
+		window.position(vector.create(activeGui.AbsoluteSize.X, activeGui.AbsoluteSize.Y) // 2)
+	end
+
+	window.requestClose:connect(die)
+	window.requestMinimize:connect(function()
+		window.minimized(not window.minimized())
+	end)
+
+	effect(function()
+		if window.minimized() then
+			pluginButton.reset()
+		end
+	end)
 
 	local function ui(): {Instance}
 		local frame = Window {
-			position = window.position,
-			size = window.size,
-			open = window.open
+			Open = window.open,
+
+			Position = window.position,
+			Size = window.size,
 		}
+
+		local titleBar = TitleBar {
+			RequestClose = window.requestClose,
+			RequestMinimize = window.requestMinimize
+		}
+
+		mount(function()
+			return {titleBar}
+		end, frame)
+
+		effect(function()
+			frame.Visible = not window.minimized()
+		end)
+
 		return {frame}
 	end
 
 	mount(ui, activeGui)
 
 	cleanup(function()
+		pluginButton.reset()
 		window.open(false)
-		task.wait(Design.WINDOW_TRANSITION.TIME)
+		window.minimized(false)
+
+		task.wait(Design.WINDOW.TRANSITION.TIME)
 		if activeGui and activeGui.Parent then activeGui:Destroy() end
 	end)
 end
 
 return function(uiFolder: Folder): ()
-	local pluginButton = Plugin.buttons["Editor"]
-	local destroy: () -> ()? = nil
-
 	if activeGui then
 		activeGui:Destroy()
 		activeGui = nil
@@ -49,15 +99,19 @@ return function(uiFolder: Folder): ()
 
 	local connection = pluginButton.onClick:connect(function()
 		if activeGui and activeGui.Parent then
-			pluginButton.reset()
-			if destroy then task.spawn(destroy) end
-			destroy = nil
+			if window.minimized() then
+				window.minimized(false)
+			else
+				die()
+			end
 		else
 			activeGui = create("ScreenGui") {
 				Name = "Editor",
+				ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+
 				Parent = uiFolder
 			}
-			if destroy then task.spawn(destroy) end
+			die()
 			destroy = root(setup)
 		end
 	end)
