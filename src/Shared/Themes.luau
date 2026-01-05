@@ -34,7 +34,7 @@ type ThemeColors = {
 }
 
 local THEME_DEFAULT: ThemeName = "Umbra"
-local THEMES = table.freeze {
+local THEMES: {[ThemeName]: ThemeColors} = {
 	["Umbra"] = {
 		Primary = Color3.fromHex("#9c7663"),
 		Secondary = Color3.fromHex("#826252"),
@@ -43,7 +43,8 @@ local THEMES = table.freeze {
 		Border = Color3.fromHex("#bc937e"),
 		Text = Color3.fromHex("#ffffff"),
 	},
-} :: {[ThemeName]: ThemeColors}
+}
+table.freeze(THEMES)
 
 local Themes = {
 	themes = THEMES
