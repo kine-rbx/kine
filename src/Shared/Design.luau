@@ -5,14 +5,14 @@ local FONTS = table.freeze {
 	["MICHROMA"] = Font.fromEnum(Enum.Font.Michroma), -- Michroma
 }
 local ROUNDING = table.freeze {
-	["SMALL"] = 2,
-	["MEDIUM"] = 4,
-	["LARGE"] = 8,
-}
-local PADDING = table.freeze {
 	["SMALL"] = 3,
 	["MEDIUM"] = 6,
 	["LARGE"] = 9,
+}
+local PADDING = table.freeze {
+	["SMALL"] = 2,
+	["MEDIUM"] = 4,
+	["LARGE"] = 8,
 }
 local TEXT_SIZES = table.freeze {
 	["BODY"] = 12,
