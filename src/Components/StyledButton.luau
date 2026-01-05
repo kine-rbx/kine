@@ -10,30 +10,36 @@ local source, tween = fluid.source, fluid.tween
 
 local Button = require(PluginRoot.Components.Primitives.Button)
 
+type valueof<T> = index<keyof<T>, T>
+
 type Source<T> = fluid.Source<T>
 type UsedAs<T> = fluid.UsedAs<T>
 type Signal<T...> = Signal.Signal<T...>
 type ButtonState = Button.ButtonState
 
-type ButtonStyles = "PRIMARY" | "TITLE"
+type Styles = "Primary" | "Secondary"
+type StyleFunction = (ButtonState) -> Color3
 
 local Styles: {
-	[ButtonStyles]: {[string]: (any) -> Color3}
+	[Styles]: {
+		BackgroundColor3: StyleFunction,
+		TextColor3: StyleFunction
+	}
 } = {
-	["PRIMARY"] = {
-		BackgroundColor3 = function(state: ButtonState): Color3
+	["Primary"] = {
+		BackgroundColor3 = function(state)
 			if state.clicked() then
 				return Themes.colors.Primary():Lerp(Themes.colors.Text(), 0.3)
 			elseif state.hovered() then
-				return Themes.colors.Primary():Lerp(Themes.colors.Text(), 0.15)
+				return Themes.colors.Secondary()
 			end
 
 			return Themes.colors.Primary()
 		end,
-		TextColor3 = Themes.colors.Text,
+		TextColor3 = Themes.colors.Text :: StyleFunction,
 	},
-	["TITLE"] = {
-		BackgroundColor3 = function(state: ButtonState): Color3
+	["Secondary"] = {
+		BackgroundColor3 = function(state)
 			if state.clicked() then
 				return Themes.colors.Secondary():Lerp(Themes.colors.Text(), 0.3)
 			elseif state.hovered() then
@@ -42,12 +48,13 @@ local Styles: {
 
 			return Themes.colors.Secondary()
 		end,
-		TextColor3 = Themes.colors.Text,
+		TextColor3 = Themes.colors.Text :: StyleFunction,
 	},
 }
+table.freeze(Styles)
 
 return function(props: {
-	Style: ButtonStyles,
+	Style: Styles,
 
 	Name: UsedAs<string>?,
 
@@ -63,7 +70,10 @@ return function(props: {
 
 	Font: UsedAs<Font>?,
 	Text: UsedAs<string>?,
+
 	TextSize: UsedAs<number>?,
+	TextMargin: vector?,
+	TextBounds: UsedAs<UDim2>?,
 
 	Disabled: Source<boolean>?,
 
@@ -100,10 +110,13 @@ return function(props: {
 
 		Font = props.Font,
 		Text = props.Text,
+
 		TextSize = props.TextSize,
 		TextColor3 = tween(function()
 			return style.TextColor3(state)
 		end, Design.BUTTON.TRANSITION.TWEEN_INFO),
+		TextMargin = props.TextMargin,
+		TextBounds = props.TextBounds,
 
 		Disabled = props.Disabled,
 
