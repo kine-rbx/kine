@@ -14,8 +14,8 @@ type UsedAs<T> = fluid.UsedAs<T>
 type Signal<T...> = Signal.Signal<T...>
 
 export type ButtonState = {
-	hovered: Source<boolean>,
-	clicked: Source<boolean>
+	read hovered: Source<boolean>,
+	read clicked: Source<boolean>
 }
 
 return function(props: {
