@@ -21,7 +21,7 @@ local function TitleButton(props: {
 	OnClick: Signal<>,
 })
 	return StyledButton {
-		Style = "TITLE",
+		Style = "Secondary",
 
 		Name = props.Name,
 
@@ -33,7 +33,9 @@ local function TitleButton(props: {
 
 		Font = Design.TITLE_BAR.BUTTON.TEXT_FONT,
 		Text = props.Text,
+
 		TextSize = Design.TITLE_BAR.BUTTON.TEXT_SIZE,
+		TextBounds = UDim2.fromScale(1, 1),
 
 		OnClick = props.OnClick
 	}
@@ -46,7 +48,9 @@ return function(props: {
 	return create("Frame") {
 		Name = "TitleBar",
 
-		BackgroundTransparency = 1,
+		LayoutOrder = 0,
+
+		BackgroundColor3 = Themes.colors.Secondary,
 		BorderSizePixel = 0,
 
 		Size = UDim2.new(1, 0, 0, Design.TITLE_BAR.HEIGHT),
@@ -56,7 +60,7 @@ return function(props: {
 
 			Size = UDim2.fromScale(1, 1),
 
-			BackgroundColor3 = Themes.colors.Secondary,
+			BackgroundTransparency = 1,
 			BorderSizePixel = 0,
 
 			TitleButton {
