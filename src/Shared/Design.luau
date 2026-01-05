@@ -25,7 +25,7 @@ return table.freeze {
 	TEXT_SIZES = TEXT_SIZES,
 	BUTTON = {
 		SIZE_DEFAULT = vector.create(16, 12),
-		MARGIN = vector.create(2, 2),
+		TEXT_MARGIN = vector.create(PADDING["MEDIUM"], PADDING["MEDIUM"]),
 		TRANSITION = {
 			TIME = 0.08,
 			TWEEN_INFO = TweenInfo.new(0.08, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out),
@@ -62,10 +62,11 @@ return table.freeze {
 	},
 	MENU_BAR = {
 		HEIGHT = 22,
-		MARGIN = vector.create(2, 2),
+		MARGIN = vector.create(PADDING["SMALL"], PADDING["SMALL"]),
 		BUTTON = {
 			TEXT_FONT = FONTS["DEFAULT"],
 			TEXT_SIZE = TEXT_SIZES["BODY"],
+			TEXT_MARGIN = vector.create(PADDING["LARGE"], PADDING["MEDIUM"]),
 			PADDING = 1,
 		},
 	},
