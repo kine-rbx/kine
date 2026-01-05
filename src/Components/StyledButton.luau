@@ -72,6 +72,8 @@ return function(props: {
 	OnClick: Signal<>?,
 	OnEnter: Signal<>?,
 	OnLeave: Signal<>?,
+	OnDown: Signal<>?,
+	OnUp: Signal<>?,
 })
 	local state = props.State or {
 		hovered = source(false),
@@ -110,5 +112,7 @@ return function(props: {
 		OnClick = props.OnClick,
 		OnEnter = props.OnEnter,
 		OnLeave = props.OnLeave,
+		OnDown = props.OnDown,
+		OnUp = props.OnUp
 	}
 end

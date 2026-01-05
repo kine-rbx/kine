@@ -45,6 +45,8 @@ return function(props: {
 	OnClick: Signal<>?,
 	OnEnter: Signal<>?,
 	OnLeave: Signal<>?,
+	OnDown: Signal<>?,
+	OnUp: Signal<>?,
 })
 	local state = props.State
 	if state then
@@ -86,12 +88,6 @@ return function(props: {
 		BackgroundColor3 = props.BackgroundColor3,
 		BorderSizePixel = 0,
 
-		MouseButton1Down = state and guard(function()
-			state.clicked(true)
-		end),
-		MouseButton1Up = state and guard(function()
-			state.clicked(false)
-		end),
 		MouseButton1Click = props.OnClick and guard(function()
 			props.OnClick:fire()
 		end),
@@ -102,6 +98,14 @@ return function(props: {
 		MouseLeave = (state or props.OnLeave) and guard(function()
 			if state then state.hovered(false) end
 			if props.OnLeave then props.OnLeave:fire() end
+		end),
+		MouseButton1Down = (state or props.OnDown) and guard(function()
+			if state then state.clicked(true) end
+			if props.OnDown then props.OnDown:fire() end
+		end),
+		MouseButton1Up = (state or props.OnUp) and guard(function()
+			if state then state.clicked(false) end
+			if props.OnUp then props.OnUp:fire() end
 		end),
 
 		Margin(Design.BUTTON.MARGIN),
