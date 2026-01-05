@@ -114,9 +114,11 @@ return function(props: {
 			create("TextLabel") {
 				Name = "Text",
 
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromScale(0.5, 0.5),
-				Size = UDim2.fromScale(1, 1),
+				Interactable = false,
+
+				Size = UDim2.fromScale(0, 1),
+
+				AutomaticSize = Enum.AutomaticSize.X,
 
 				BackgroundTransparency = 1,
 
