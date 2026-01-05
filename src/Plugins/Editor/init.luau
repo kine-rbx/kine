@@ -10,6 +10,7 @@ local root, source, effect, create, cleanup, mount = fluid.root, fluid.source, f
 
 local Window = require(PluginRoot.Components.Window)
 local TitleBar = require(PluginRoot.Components.TitleBar)
+local MenuBar = require(PluginRoot.Components.MenuBar)
 
 local pluginButton = Plugin.buttons["Editor"]
 
@@ -63,13 +64,31 @@ local function setup(): ()
 			Size = window.size,
 		}
 
-		local titleBar = TitleBar {
-			RequestClose = window.requestClose,
-			RequestMinimize = window.requestMinimize
-		}
-
 		mount(function()
-			return {titleBar}
+			local titleBar = TitleBar {
+				RequestClose = window.requestClose,
+				RequestMinimize = window.requestMinimize
+			}
+			local menuBar = MenuBar {
+				{
+					Text = "File",
+					Dropdown = {}
+				}
+			}
+			local container = nil
+
+			return {
+				titleBar,
+				menuBar,
+				container,
+
+				create("UIListLayout") {
+					FillDirection = Enum.FillDirection.Vertical,
+					SortOrder = Enum.SortOrder.LayoutOrder,
+
+					VerticalAlignment = Enum.VerticalAlignment.Top,
+				}
+			}
 		end, frame)
 
 		effect(function()
