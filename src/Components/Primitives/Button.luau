@@ -35,8 +35,11 @@ return function(props: {
 
 	Font: UsedAs<Font>?,
 	Text: UsedAs<string>?,
+
 	TextSize: UsedAs<number>?,
 	TextColor3: UsedAs<Color3>?,
+	TextMargin: vector?,
+	TextBounds: UsedAs<UDim2>?,
 
 	Disabled: Source<boolean>?,
 
@@ -108,7 +111,7 @@ return function(props: {
 			if props.OnUp then props.OnUp:fire() end
 		end),
 
-		Margin(Design.BUTTON.MARGIN),
+		Margin(props.TextMargin or Design.BUTTON.TEXT_MARGIN),
 
 		if props.Text then
 			create("TextLabel") {
@@ -116,7 +119,7 @@ return function(props: {
 
 				Interactable = false,
 
-				Size = UDim2.fromScale(0, 1),
+				Size = props.TextBounds or UDim2.fromScale(0, 1),
 
 				AutomaticSize = Enum.AutomaticSize.X,
 
