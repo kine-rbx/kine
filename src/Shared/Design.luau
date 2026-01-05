@@ -63,5 +63,10 @@ return table.freeze {
 	MENU_BAR = {
 		HEIGHT = 22,
 		MARGIN = vector.create(2, 2),
+		BUTTON = {
+			TEXT_FONT = FONTS["DEFAULT"],
+			TEXT_SIZE = TEXT_SIZES["BODY"],
+			PADDING = 1,
+		},
 	},
 }
