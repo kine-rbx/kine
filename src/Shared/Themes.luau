@@ -57,6 +57,7 @@ local Themes = {
 }
 
 function Themes._initialize(): ()
+	if Themes.current then return end
 	root(function()
 		local current = source(THEME_DEFAULT)
 		Themes.current = current
