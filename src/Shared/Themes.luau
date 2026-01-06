@@ -56,21 +56,19 @@ local Themes = {
 	_initialize: () -> ()
 }
 
-local function init(): ()
-	local current = source(THEME_DEFAULT)
-	Themes.current = current
-	Themes.colors = table.freeze {
-		["Primary"] = derive(function() return THEMES[current()].Primary end),
-		["Secondary"] = derive(function() return THEMES[current()].Secondary end),
-		["Background"] = derive(function() return THEMES[current()].Background end),
-		["Special"] = derive(function() return THEMES[current()].Special end),
-		["Border"] = derive(function() return THEMES[current()].Border end),
-		["Text"] = derive(function() return THEMES[current()].Text end),
-	}
-end
-
 function Themes._initialize(): ()
-	root(init)
+	root(function()
+		local current = source(THEME_DEFAULT)
+		Themes.current = current
+		Themes.colors = table.freeze {
+			["Primary"] = derive(function() return THEMES[current()].Primary end),
+			["Secondary"] = derive(function() return THEMES[current()].Secondary end),
+			["Background"] = derive(function() return THEMES[current()].Background end),
+			["Special"] = derive(function() return THEMES[current()].Special end),
+			["Border"] = derive(function() return THEMES[current()].Border end),
+			["Text"] = derive(function() return THEMES[current()].Text end),
+		}
+	end)
 end
 
 return Themes
