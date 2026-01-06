@@ -1,7 +1,7 @@
 --!strict
 
 local PluginRoot = script:FindFirstAncestor("Kine")
-local Signal = require(PluginRoot.Utility.Signal)
+local Signal = require(PluginRoot.Common.Signal)
 
 type Signal<T...> = Signal.Signal<T...>
 

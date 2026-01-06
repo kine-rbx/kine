@@ -3,7 +3,7 @@
 local PluginRoot = script:FindFirstAncestor("Kine")
 local Design = require(PluginRoot.Shared.Design)
 local Themes = require(PluginRoot.Shared.Themes)
-local Signal = require(PluginRoot.Utility.Signal)
+local Signal = require(PluginRoot.Common.Signal)
 
 local fluid = require(PluginRoot.Packages.fluid)
 local create = fluid.create
