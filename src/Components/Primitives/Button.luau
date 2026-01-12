@@ -14,7 +14,7 @@ type Source<T> = fluid.Source<T>
 type UsedAs<T> = fluid.UsedAs<T>
 type Signal<T...> = Signal.Signal<T...>
 
-export type ButtonState = {
+export type ButtonVisualState = {
 	read hovered: Source<boolean>,
 	read clicked: Source<boolean>
 }
@@ -44,7 +44,7 @@ return function(props: {
 
 	Disabled: Source<boolean>?,
 
-	State: ButtonState?,
+	State: ButtonVisualState?,
 
 	OnClick: Signal<>?,
 	OnEnter: Signal<>?,
