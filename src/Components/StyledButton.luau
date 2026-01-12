@@ -6,25 +6,27 @@ local Themes = require(PluginRoot.Shared.Themes)
 local Signal = require(PluginRoot.Common.Signal)
 
 local fluid = require(PluginRoot.Packages.fluid)
-local source, tween = fluid.source, fluid.tween
+local source, effect, tween = fluid.source, fluid.effect, fluid.tween
 
 local Button = require(PluginRoot.Components.Primitives.Button)
-
-type valueof<T> = index<keyof<T>, T>
 
 type Source<T> = fluid.Source<T>
 type UsedAs<T> = fluid.UsedAs<T>
 type Signal<T...> = Signal.Signal<T...>
-type ButtonState = Button.ButtonState
+type ButtonVisualState = Button.ButtonVisualState
 
-type Styles = "Primary" | "Secondary"
-type StyleFunction = (ButtonState) -> Color3
+export type StyleName = "Primary" | "Secondary"
+
+type StyleFunction = (ButtonVisualState) -> Color3
+type Style = {
+	BackgroundColor3: StyleFunction,
+	TextColor3: StyleFunction
+}
+
+local TRANSITION = Design.BUTTON.TRANSITION
 
 local Styles: {
-	[Styles]: {
-		BackgroundColor3: StyleFunction,
-		TextColor3: StyleFunction
-	}
+	[StyleName]: Style
 } = {
 	["Primary"] = {
 		BackgroundColor3 = function(state)
@@ -53,8 +55,33 @@ local Styles: {
 }
 table.freeze(Styles)
 
+local function getTweens(style: Style, state: ButtonVisualState)
+	local background, backgroundControls = tween(function()
+		return style.BackgroundColor3(state)
+	end, TRANSITION.TWEEN_INFO["HOVER"])
+
+	local text, textControls = tween(function()
+		return style.TextColor3(state)
+	end, TRANSITION.TWEEN_INFO["HOVER"])
+
+	effect(function()
+		if state.clicked() then
+			backgroundControls {tween_info = TRANSITION.TWEEN_INFO["CLICK"]}
+			textControls {tween_info = TRANSITION.TWEEN_INFO["CLICK"]}
+		else
+			backgroundControls {tween_info = TRANSITION.TWEEN_INFO["HOVER"]}
+			textControls {tween_info = TRANSITION.TWEEN_INFO["HOVER"]}
+		end
+	end)
+
+	return {
+		background = background,
+		text = text,
+	}
+end
+
 return function(props: {
-	Style: Styles,
+	Style: StyleName,
 
 	Name: UsedAs<string>?,
 
@@ -77,7 +104,7 @@ return function(props: {
 
 	Disabled: Source<boolean>?,
 
-	State: ButtonState?,
+	State: ButtonVisualState?,
 
 	OnClick: Signal<>?,
 	OnEnter: Signal<>?,
@@ -85,11 +112,13 @@ return function(props: {
 	OnDown: Signal<>?,
 	OnUp: Signal<>?,
 })
-	local state = props.State or {
+	local style = Styles[props.Style]
+	local state: ButtonVisualState = props.State or {
 		hovered = source(false),
 		clicked = source(false)
 	}
-	local style = Styles[props.Style]
+
+	local tweens = getTweens(style, state)
 
 	return Button {
 		Name = props.Name,
@@ -104,17 +133,13 @@ return function(props: {
 		SizeConstraint = props.SizeConstraint,
 		AutomaticSize = props.AutomaticSize,
 
-		BackgroundColor3 = tween(function()
-			return style.BackgroundColor3(state)
-		end, Design.BUTTON.TRANSITION.TWEEN_INFO),
+		BackgroundColor3 = tweens.background,
 
 		Font = props.Font,
 		Text = props.Text,
 
 		TextSize = props.TextSize,
-		TextColor3 = tween(function()
-			return style.TextColor3(state)
-		end, Design.BUTTON.TRANSITION.TWEEN_INFO),
+		TextColor3 = tweens.text,
 		TextMargin = props.TextMargin,
 		TextBounds = props.TextBounds,
 
