@@ -2,10 +2,11 @@
 
 local PluginRoot = script:FindFirstAncestor("Kine")
 local Design = require(PluginRoot.Shared.Design)
+local Inputs = require(PluginRoot.Shared.Inputs)
 local Signal = require(PluginRoot.Common.Signal)
 
 local fluid = require(PluginRoot.Packages.fluid)
-local effect, create = fluid.effect, fluid.create
+local effect, create, action = fluid.effect, fluid.create, fluid.action
 
 local Margin = require(PluginRoot.Components.Decorators.Margin)
 
@@ -91,26 +92,6 @@ return function(props: {
 		BackgroundColor3 = props.BackgroundColor3,
 		BorderSizePixel = 0,
 
-		MouseButton1Click = props.OnClick and guard(function()
-			props.OnClick:fire()
-		end),
-		MouseEnter = (state or props.OnLeave) and guard(function()
-			if state then state.hovered(true) end
-			if props.OnEnter then props.OnEnter:fire() end
-		end),
-		MouseLeave = (state or props.OnLeave) and guard(function()
-			if state then state.hovered(false) end
-			if props.OnLeave then props.OnLeave:fire() end
-		end),
-		MouseButton1Down = (state or props.OnDown) and guard(function()
-			if state then state.clicked(true) end
-			if props.OnDown then props.OnDown:fire() end
-		end),
-		MouseButton1Up = (state or props.OnUp) and guard(function()
-			if state then state.clicked(false) end
-			if props.OnUp then props.OnUp:fire() end
-		end),
-
 		Margin(props.TextMargin or Design.BUTTON.TEXT_MARGIN),
 
 		if props.Text then
@@ -130,6 +111,30 @@ return function(props: {
 				TextSize = props.TextSize or Design.TEXT_SIZES["BODY"],
 				TextColor3 = props.TextColor3
 			}
-		else nil
+		else nil,
+
+		props.OnClick and action(Inputs.connectObject("LeftClick", guard(function()
+			props.OnClick:fire()
+		end)) :: (Instance) -> ()),
+
+		(state or props.OnDown) and action(Inputs.connectObject("LeftDown", guard(function()
+			if state then state.clicked(true) end
+			if props.OnDown then props.OnDown:fire() end
+		end)) :: (Instance) -> ()),
+
+		(state or props.OnUp) and action(Inputs.connectObject("LeftUp", guard(function()
+			if state then state.clicked(false) end
+			if props.OnUp then props.OnUp:fire() end
+		end)) :: (Instance) -> ()),
+
+		(state or props.OnEnter) and action(Inputs.connectObject("Enter", guard(function()
+			if state then state.hovered(true) end
+			if props.OnEnter then props.OnEnter:fire() end
+		end)) :: (Instance) -> ()),
+
+		(state or props.OnLeave) and action(Inputs.connectObject("Leave", guard(function()
+			if state then state.hovered(false) end
+			if props.OnLeave then props.OnLeave:fire() end
+		end)) :: (Instance) -> ())
 	}
 end
