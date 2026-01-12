@@ -5,6 +5,7 @@ local CoreGui = game:GetService("CoreGui")
 local PluginRoot = script
 local Config = require(PluginRoot.Shared.Config)
 local Plugin = require(PluginRoot.Shared.Plugin)
+local Inputs = require(PluginRoot.Shared.Inputs)
 local Themes = require(PluginRoot.Shared.Themes)
 
 local fluid = require(PluginRoot.Packages.fluid)
@@ -58,6 +59,7 @@ uiFolder = CoreGui:FindFirstChild(Config.UI_FOLDER_NAME) :: Folder
 if uiFolder then uiFolder:Destroy() end
 
 Plugin._initialize(plugin)
+Inputs._initialize()
 Themes._initialize()
 initialize()
 
