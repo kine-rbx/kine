@@ -69,6 +69,7 @@ function Themes._initialize(): ()
 			["Border"] = derive(function() return THEMES[current()].Border end),
 			["Text"] = derive(function() return THEMES[current()].Text end),
 		}
+		table.freeze(Themes)
 	end)
 end
 
