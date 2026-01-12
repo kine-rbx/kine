@@ -27,13 +27,20 @@ return table.freeze {
 		SIZE_DEFAULT = vector.create(16, 12),
 		TEXT_MARGIN = vector.create(PADDING["MEDIUM"], PADDING["MEDIUM"]),
 		TRANSITION = {
-			TIME = 0.08,
-			TWEEN_INFO = TweenInfo.new(0.08, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out),
+			TIME = 0.1,
+			TWEEN_INFO = {
+				["HOVER"] = TweenInfo.new(0.1, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out),
+				["CLICK"] = TweenInfo.new(0),
+			},
 		},
 	},
 	WINDOW = {
 		TRANSPARENCY = 0.2,
 		ROUNDING = ROUNDING["MEDIUM"],
+		COLORS = {
+			FOCUSED = Color3.new(1, 1, 1),
+			UNFOCUSED = Color3.new(0.4, 0.4, 0.4),
+		},
 		TRANSITION = {
 			TIME = 0.18,
 			SCALE = 1.1,
@@ -42,6 +49,7 @@ return table.freeze {
 				["IN"] = TweenInfo.new(0.18, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out),
 				["OUT"] = TweenInfo.new(0.16, Enum.EasingStyle.Cubic, Enum.EasingDirection.In),
 				["OUT_POSITION"] = TweenInfo.new(0.16, Enum.EasingStyle.Linear),
+				["FOCUS"] = TweenInfo.new(0.1, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out),
 			},
 		},
 	},
