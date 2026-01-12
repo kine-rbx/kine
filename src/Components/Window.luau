@@ -21,6 +21,8 @@ type WindowVisualState = {
 local TRANSITION = Design.WINDOW.TRANSITION
 
 local function getTweens(state: WindowVisualState)
+	state.open(false)
+
 	local color = tween(function()
 		if state.focused() then
 			return Design.WINDOW.COLORS.FOCUSED
