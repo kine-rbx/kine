@@ -4,6 +4,7 @@ local CoreGui = game:GetService("CoreGui")
 local UserInputService = game:GetService("UserInputService")
 
 local PluginRoot = script:FindFirstAncestor("Kine")
+local Config = require(PluginRoot.Shared.Config)
 
 local fluid = require(PluginRoot.Packages.fluid)
 local root, cleanup, interval = fluid.root, fluid.cleanup, fluid.interval
@@ -14,6 +15,7 @@ export type Interaction =
 	| "MiddleClick" | "MiddleDown" | "MiddleUp"
 	| "ScrollDown" | "ScrollUp"
 	| "Enter" | "Leave"
+	| "Focus" | "Unfocus"
 
 type InputAction =
 	| "Down"
@@ -33,7 +35,6 @@ type Activity =
 type Window = {
 	instance: CanvasGroup,
 
-	elements: {[GuiObject]: true},
 	focused: GuiObject?,
 
 	focus: () -> (),
@@ -69,13 +70,7 @@ local CLICK_MAP: {[InputType]: Interaction} = {
 }
 
 local callbacks: {[GuiObject]: {[Interaction]: () -> ()}} = {}
-local listeners: {[Interaction]: {[GuiObject]: true}} = {
-	LeftClick = {}, LeftDown = {}, LeftUp = {},
-	RightClick = {}, RightDown = {}, RightUp = {},
-	MiddleClick = {}, MiddleDown = {}, MiddleUp = {},
-	ScrollDown = {}, ScrollUp = {},
-	Enter = {}, Leave = {},
-}
+local parents: {[GuiObject]: Window} = {}
 
 local windows: {Window} = {}
 local focused: Window? = nil
@@ -88,19 +83,10 @@ local function remove<V>(t: {V}, v: V): ()
 	if index then table.remove(t, index) end
 end
 
-local function filter(objects: {GuiObject}): GuiObject?
-	local element: GuiObject?
-	for _, object in objects do
-		if object.Active then
-			element = object
-		break end
-	end
-
-	if element then
-		for _, window in windows do
-			if window.instance == element or window.elements[element] then
-				return element
-			end
+local function filter(elements: {GuiObject}): GuiObject?
+	for _, element in elements do
+		if element.Active and parents[element] then
+			return element
 		end
 	end
 
@@ -114,52 +100,76 @@ local function emit(element: GuiObject, interaction: Interaction): ()
 	end
 end
 
-local function unfocus(): ()
-	if focused then
-		focused.unfocus()
-		focused.focused = nil
-		focused = nil
+local function order(): ()
+	local indexWindow = 0
+	local indexGui = Config.UI_BASE_DISPLAY_ORDER
+	local lastGui: ScreenGui? = nil
+
+	for _, window in windows do
+		local instance = window.instance
+		instance.ZIndex = indexWindow
+		indexWindow += 1
+
+		local gui = instance.Parent
+		if gui and gui ~= lastGui and gui:IsA("ScreenGui") then
+			gui.DisplayOrder = indexGui
+			indexGui += 1
+			lastGui = gui
+		end
 	end
 end
 
 local function focus(window: Window): ()
+	if window == focused then return end
+
 	remove(windows, window)
 	table.insert(windows, 1, window)
 
-	unfocus()
+	if focused then
+		focused.unfocus()
+		focused.focused = nil
+	end
+
 	focused = window
 	window.focus()
+	order()
 end
 
 local function update(action: InputAction, element: GuiObject?, input: InputType?): ()
-	if input == "Scroll" and element then
-		emit(element, INTERACTION_MAP[action][input])
+	if input == "Scroll" then
+		if element and parents[element] == focused then
+			emit(element, INTERACTION_MAP[action][input])
+		end
 	elseif action == "Enter" then
 		if hovered and element ~= hovered then
 			emit(hovered, "Leave")
 			hovered = nil
 		end
 		if element and element ~= hovered then
-			emit(element, "Enter")
-			hovered = element
+			if parents[element] == focused then
+				emit(element, "Enter")
+				hovered = element
+			end
 		end
 	elseif action == "Down" then
 		assert(input)
 		if element then
-			local parent: Window?
-			for _, window in windows do
-				if window.instance == element or window.elements[element] then
-					parent = window
-				break end
-			end
-
-			assert(parent, "element clicked, but no parent window found")
-			if parent ~= focused then
-				focus(parent)
-			end
+			focus(parents[element])
 
 			emit(element, INTERACTION_MAP[action][input])
 			clicked = element
+
+			if focused then
+				emit(element, "Focus")
+				focused.focused = element
+			end
+		end
+		if focused then
+			local object = focused.focused
+			if object and element ~= object then
+				emit(object, "Unfocus")
+				focused.focused = nil
+			end
 		end
 	elseif action == "Up" then
 		assert(input)
@@ -179,40 +189,51 @@ local Inputs = {}
 local initialized = false
 
 local function init(): ()
-	local pass = interval(function()
+	local elements = interval(function()
+		if #windows == 0 then return {} end
+
 		local position = UserInputService:GetMouseLocation()
 		return CoreGui:GetGuiObjectsAtPosition(position.X, position.Y)
 	end)
 
-	local function wrap(
-		callback: (object: InputObject, input: InputType, element: GuiObject?) -> ()
-	): (InputObject, boolean) -> ()
-		return function(object)
-			local input = INPUT_TYPE_MAP[object.UserInputType]
-			if not input then return end
+	UserInputService.InputBegan:Connect(function(object)
+		if not focused then return end
 
-			local element = filter(pass())
-			callback(object, input, element)
-		end
-	end
+		local input = INPUT_TYPE_MAP[object.UserInputType]
+		if not input then return end
 
-	UserInputService.InputBegan:Connect(wrap(function(object, input, element)
 		local action: InputAction = "Down"
-		if input == "Scroll" then
-			action = if object.Position.Y > 0 then "Up" else "Down"
-		end
-		update(action, element, input)
-	end))
+		local element = filter(elements())
 
-	UserInputService.InputEnded:Connect(wrap(function(object, input, element)
-		local action: InputAction = "Up"
 		update(action, element, input)
-	end))
+	end)
+
+	UserInputService.InputEnded:Connect(function(object)
+		if not focused then return end
+
+		local input = INPUT_TYPE_MAP[object.UserInputType]
+		if not input then return end
+
+		local action: InputAction = "Up"
+		local element = filter(elements())
+
+		update(action, element, input)
+	end)
 
 	UserInputService.InputChanged:Connect(function(object)
+		if not focused then return end
+
+		local input = INPUT_TYPE_MAP[object.UserInputType]
 		if object.UserInputType == Enum.UserInputType.MouseMovement then
-			local element = filter(pass())
-			update("Enter", element)
+			local action: InputAction = "Enter"
+			local element = filter(elements())
+
+			update(action, element)
+		elseif input == "Scroll" then
+			local action: InputAction = if object.Position.Z > 0 then "Up" else "Down"
+			local element = filter(elements())
+
+			update(action, element, "Scroll")
 		end
 	end)
 end
@@ -226,9 +247,7 @@ end
 function Inputs.connectObject(
 	interaction: Interaction, callback: () -> ()
 ): (GuiObject) -> ()
-	-- weird syntax so that fluid.action can be used effectively
 	return function(element)
-		listeners[interaction][element] = true
 		if not callbacks[element] then
 			callbacks[element] = {[interaction] = callback}
 		else
@@ -236,10 +255,9 @@ function Inputs.connectObject(
 		end
 
 		cleanup(function()
-			listeners[interaction][element] = nil
 			if not callbacks[element] then return end
-
 			callbacks[element][interaction] = nil
+
 			if next(callbacks[element]) == nil then
 				callbacks[element] = nil
 			end
@@ -247,11 +265,14 @@ function Inputs.connectObject(
 	end
 end
 
+function Inputs.focusObject(element: GuiObject): ()
+	if focused then focused.focused = element end
+end
+
 function Inputs.registerWindow(methods: {
 	focus: () -> (),
 	unfocus: () -> ()
 }): (CanvasGroup) -> ()
-	-- weird syntax so that fluid.action can be used effectively
 	return function(instance)
 		for index, window in windows do
 			if window.instance == instance then
@@ -262,7 +283,6 @@ function Inputs.registerWindow(methods: {
 		local window: Window = {
 			instance = instance,
 
-			elements = {},
 			focused = nil,
 
 			focus = methods.focus,
@@ -271,10 +291,10 @@ function Inputs.registerWindow(methods: {
 
 		local function descendant(element: Instance): ()
 			if not element:IsA("GuiObject") then return end
-			window.elements[element] = true
+			parents[element] = window
 
 			element.Destroying:Once(function()
-				window.elements[element] = nil
+				parents[element] = nil
 			end)
 		end
 
