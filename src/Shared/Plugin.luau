@@ -40,11 +40,19 @@ local plugin: Plugin
 
 Plugin.buttons = {} :: {[PluginKey | string]: PluginButton}
 
-function Plugin._initialize(_plugin: Plugin): ()
-	if plugin then return end
-	plugin = _plugin
+function Plugin.setSetting(key: string, value: any): ()
+	plugin:SetSetting(SETTING_FORMAT:format(key), value)
+end
 
-	local toolbar = _plugin:CreateToolbar(TOOLBAR_NAME)
+function Plugin.getSetting(key: string): any
+	return plugin:GetSetting(SETTING_FORMAT:format(key))
+end
+
+function Plugin._init(_plugin: Plugin): ()
+	Plugin._init = function() end
+
+	plugin = _plugin
+	local toolbar = plugin:CreateToolbar(TOOLBAR_NAME)
 
 	for key, config in BUTTON_CONFIG do
 		local button = toolbar:CreateButton(key, config.tooltip, config.icon)
@@ -63,14 +71,8 @@ function Plugin._initialize(_plugin: Plugin): ()
 			end
 		}
 	end
-end
 
-function Plugin.setSetting(key: string, value: any): ()
-	plugin:SetSetting(SETTING_FORMAT:format(key), value)
-end
-
-function Plugin.getSetting(key: string): any
-	return plugin:GetSetting(SETTING_FORMAT:format(key))
+	table.freeze(Plugin)
 end
 
 return Plugin

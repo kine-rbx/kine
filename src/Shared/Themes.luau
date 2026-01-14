@@ -53,24 +53,24 @@ local Themes = {
 	colors: amalgamate<ThemeColors, Readable<Color3>>,
 	themes: typeof(THEMES),
 
-	_initialize: () -> ()
+	_init: () -> ()
 }
 
-function Themes._initialize(): ()
-	if Themes.current then return end
-	root(function()
-		local current = source(THEME_DEFAULT)
-		Themes.current = current
-		Themes.colors = table.freeze {
-			["Primary"] = derive(function() return THEMES[current()].Primary end),
-			["Secondary"] = derive(function() return THEMES[current()].Secondary end),
-			["Background"] = derive(function() return THEMES[current()].Background end),
-			["Special"] = derive(function() return THEMES[current()].Special end),
-			["Border"] = derive(function() return THEMES[current()].Border end),
-			["Text"] = derive(function() return THEMES[current()].Text end),
-		}
-		table.freeze(Themes)
-	end)
+function Themes._init(): ()
+	Themes._init = function() end
+
+	local current = source(THEME_DEFAULT)
+	Themes.current = current
+	Themes.colors = table.freeze {
+		["Primary"] = derive(function() return THEMES[current()].Primary end),
+		["Secondary"] = derive(function() return THEMES[current()].Secondary end),
+		["Background"] = derive(function() return THEMES[current()].Background end),
+		["Special"] = derive(function() return THEMES[current()].Special end),
+		["Border"] = derive(function() return THEMES[current()].Border end),
+		["Text"] = derive(function() return THEMES[current()].Text end),
+	}
+
+	table.freeze(Themes)
 end
 
 return Themes

@@ -186,63 +186,6 @@ local function update(action: InputAction, element: GuiObject?, input: InputType
 end
 
 local Inputs = {}
-local initialized = false
-
-local function init(): ()
-	local elements = interval(function()
-		if #windows == 0 then return {} end
-
-		local position = UserInputService:GetMouseLocation()
-		return CoreGui:GetGuiObjectsAtPosition(position.X, position.Y)
-	end)
-
-	UserInputService.InputBegan:Connect(function(object)
-		if not focused then return end
-
-		local input = INPUT_TYPE_MAP[object.UserInputType]
-		if not input then return end
-
-		local action: InputAction = "Down"
-		local element = filter(elements())
-
-		update(action, element, input)
-	end)
-
-	UserInputService.InputEnded:Connect(function(object)
-		if not focused then return end
-
-		local input = INPUT_TYPE_MAP[object.UserInputType]
-		if not input then return end
-
-		local action: InputAction = "Up"
-		local element = filter(elements())
-
-		update(action, element, input)
-	end)
-
-	UserInputService.InputChanged:Connect(function(object)
-		if not focused then return end
-
-		local input = INPUT_TYPE_MAP[object.UserInputType]
-		if object.UserInputType == Enum.UserInputType.MouseMovement then
-			local action: InputAction = "Enter"
-			local element = filter(elements())
-
-			update(action, element)
-		elseif input == "Scroll" then
-			local action: InputAction = if object.Position.Z > 0 then "Up" else "Down"
-			local element = filter(elements())
-
-			update(action, element, "Scroll")
-		end
-	end)
-end
-
-function Inputs._initialize(): ()
-	if initialized then return end
-	initialized = true
-	root(init)
-end
 
 function Inputs.connectObject(
 	interaction: Interaction, callback: () -> ()
@@ -308,6 +251,60 @@ function Inputs.registerWindow(methods: {
 			remove(windows, window)
 		end)
 	end
+end
+
+function Inputs._init(): ()
+	Inputs._init = function() end
+
+	local elements = interval(function(): {GuiObject}
+		if #windows == 0 then return {} end
+
+		local position = UserInputService:GetMouseLocation()
+		return CoreGui:GetGuiObjectsAtPosition(position.X, position.Y)
+	end)
+
+	UserInputService.InputBegan:Connect(function(object)
+		if not focused then return end
+
+		local input = INPUT_TYPE_MAP[object.UserInputType]
+		if not input then return end
+
+		local action: InputAction = "Down"
+		local element = filter(elements())
+
+		update(action, element, input)
+	end)
+
+	UserInputService.InputEnded:Connect(function(object)
+		if not focused then return end
+
+		local input = INPUT_TYPE_MAP[object.UserInputType]
+		if not input then return end
+
+		local action: InputAction = "Up"
+		local element = filter(elements())
+
+		update(action, element, input)
+	end)
+
+	UserInputService.InputChanged:Connect(function(object)
+		if not focused then return end
+
+		local input = INPUT_TYPE_MAP[object.UserInputType]
+		if object.UserInputType == Enum.UserInputType.MouseMovement then
+			local action: InputAction = "Enter"
+			local element = filter(elements())
+
+			update(action, element)
+		elseif input == "Scroll" then
+			local action: InputAction = if object.Position.Z > 0 then "Up" else "Down"
+			local element = filter(elements())
+
+			update(action, element, "Scroll")
+		end
+	end)
+
+	table.freeze(Inputs)
 end
 
 return Inputs
