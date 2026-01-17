@@ -41,7 +41,7 @@ local function init(): ()
 
 	local destroy = root(setup)
 
-	local function reset()
+	local function reset(): ()
 		if not unloaded then
 			destroy()
 			init()
