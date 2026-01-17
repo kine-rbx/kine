@@ -16,104 +16,121 @@ local pluginButton = Plugin.buttons["Editor"]
 
 local activeGui: ScreenGui? = nil
 
-local destroy: () -> ()? = nil
-local window = {
-	open = source(true),
-	minimized = source(false),
-
-	position = source(vector.create(math.huge, 0)),
-	size = source(Design.WINDOWS["EDITOR"].SIZE_DEFAULT),
-
-	requestClose = Signal.new(),
-	requestMinimize = Signal.new()
-}
-
+type Source<T> = fluid.Source<T>
 type Signal<T...> = Signal.Signal<T...>
 
-local function die(): ()
-	if destroy then task.spawn(destroy) end
-	destroy = nil
-end
+type WindowContext = {
+	open: Source<boolean>,
+	minimized: Source<boolean>,
 
-local function setup(): ()
-	assert(activeGui)
+	position: Source<vector>,
+	size: Source<vector>,
 
-	window.open(true)
-	window.minimized(false)
-
-	if window.position().x == math.huge then
-		window.position(vector.create(activeGui.AbsoluteSize.X, activeGui.AbsoluteSize.Y) // 2)
-	end
-
-	window.requestClose:connect(die)
-	window.requestMinimize:connect(function()
-		window.minimized(not window.minimized())
-	end)
-
-	effect(function()
-		if window.minimized() then
-			pluginButton.reset()
-		end
-	end)
-
-	local function ui(): {Instance}
-		local frame = Window {
-			Open = window.open,
-
-			Position = window.position,
-			Size = window.size,
-		}
-
-		mount(function()
-			local titleBar = TitleBar {
-				RequestClose = window.requestClose,
-				RequestMinimize = window.requestMinimize
-			}
-			local menuBar = MenuBar {
-				{
-					Text = "File",
-					Dropdown = {}
-				}
-			}
-			local container = nil
-
-			return {
-				titleBar,
-				menuBar,
-				container,
-
-				create("UIListLayout") {
-					FillDirection = Enum.FillDirection.Vertical,
-					SortOrder = Enum.SortOrder.LayoutOrder,
-
-					VerticalAlignment = Enum.VerticalAlignment.Top,
-				}
-			}
-		end, frame)
-
-		effect(function()
-			frame.Visible = not window.minimized()
-		end)
-
-		return {frame}
-	end
-
-	mount(ui, activeGui)
-
-	cleanup(function()
-		pluginButton.reset()
-		window.open(false)
-		window.minimized(false)
-
-		task.wait(Design.WINDOW.TRANSITION.TIME)
-		if activeGui and activeGui.Parent then activeGui:Destroy() end
-	end)
-end
+	requestClose: Signal<>,
+	requestMinimize: Signal<>
+}
 
 return function(uiFolder: Folder): ()
+	local destroy: () -> ()? = nil
+	local window: WindowContext
+
 	if activeGui then
 		activeGui:Destroy()
 		activeGui = nil
+	end
+
+	local function reset(): ()
+		local position = window and window.position()
+		local size = window and window.size()
+
+		window = {
+			open = source(true),
+			minimized = source(false),
+
+			position = source(position or vector.create(math.huge, 0)),
+			size = source(size or Design.WINDOWS["EDITOR"].SIZE_DEFAULT),
+
+			requestClose = Signal.new(),
+			requestMinimize = Signal.new()
+		}
+	end
+
+	local function die(): ()
+		if destroy then task.spawn(destroy) end
+		destroy = nil
+	end
+
+	local function setup(): ()
+		assert(activeGui)
+		reset()
+
+		if window.position().x == math.huge then
+			window.position(vector.create(activeGui.AbsoluteSize.X, activeGui.AbsoluteSize.Y) // 2)
+		end
+
+		window.requestClose:connect(die)
+		window.requestMinimize:connect(function()
+			window.minimized(not window.minimized())
+		end)
+
+		effect(function()
+			if window.minimized() then
+				pluginButton.reset()
+			end
+		end)
+
+		local function ui(): {Instance}
+			local frame = Window {
+				Open = window.open,
+
+				Position = window.position,
+				Size = window.size,
+			}
+
+			mount(function()
+				local titleBar = TitleBar {
+					RequestClose = window.requestClose,
+					RequestMinimize = window.requestMinimize
+				}
+				local menuBar = MenuBar {
+					{
+						Text = "File",
+						Dropdown = {}
+					}
+				}
+				local container = nil
+
+				return {
+					titleBar,
+					menuBar,
+					container,
+
+					create("UIListLayout") {
+						FillDirection = Enum.FillDirection.Vertical,
+						SortOrder = Enum.SortOrder.LayoutOrder,
+
+						VerticalAlignment = Enum.VerticalAlignment.Top,
+					}
+				}
+			end, frame)
+
+			effect(function()
+				frame.Visible = not window.minimized()
+			end)
+
+			return {frame}
+		end
+
+		mount(ui, activeGui)
+
+		cleanup(function()
+			pluginButton.reset()
+			window.open(false)
+			window.minimized(false)
+
+			task.wait(Design.WINDOW.TRANSITION.TIME)
+			if activeGui and activeGui.Parent then activeGui:Destroy() end
+		end)
 	end
 
 	local connection = pluginButton.onClick:connect(function()
