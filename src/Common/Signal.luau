@@ -34,7 +34,7 @@ end
 
 local function runner(): ()
 	while true do
-		run(coroutine.yield() :: any)
+		run(coroutine.yield())
 	end
 end
 
