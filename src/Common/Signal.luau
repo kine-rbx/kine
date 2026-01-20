@@ -75,11 +75,11 @@ local function connect<T...>(self: Signal<T...>, callback: (T...) -> ()): Connec
 	if tail then
 		connection._parent = tail
 		tail._child = connection
+	else
+		self._head = connection
 	end
 
 	self._tail = connection
-	if not self._head then self._head = connection end
-
 	return connection
 end
 
@@ -115,8 +115,6 @@ end
 
 function Signal.new<T...>(): Signal<T...>
 	return {
-		_connections = {},
-
 		connect = connect,
 		once = once,
 		fire = fire,
