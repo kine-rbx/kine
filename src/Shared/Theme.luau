@@ -3,7 +3,7 @@
 local PluginRoot = script:FindFirstAncestor("Kine")
 
 local fluid = require(PluginRoot.Packages.fluid)
-local source, root, derive = fluid.source, fluid.root, fluid.derive
+local source, derive = fluid.source, fluid.derive
 
 type Source<T> = fluid.Source<T>
 type Readable<T> = () -> T
@@ -46,31 +46,31 @@ local THEMES: {[ThemeName]: ThemeColors} = {
 }
 table.freeze(THEMES)
 
-local Themes = {
+local Theme = {
 	themes = THEMES
 } :: {
-	current: Source<ThemeName>,
+	active: Source<ThemeName>,
 	colors: amalgamate<ThemeColors, Readable<Color3>>,
 	themes: typeof(THEMES),
 
 	_init: () -> ()
 }
 
-function Themes._init(): ()
-	Themes._init = function() end
+function Theme._init(): ()
+	Theme._init = function() end
 
-	local current = source(THEME_DEFAULT)
-	Themes.current = current
-	Themes.colors = table.freeze {
-		["Primary"] = derive(function() return THEMES[current()].Primary end),
-		["Secondary"] = derive(function() return THEMES[current()].Secondary end),
-		["Background"] = derive(function() return THEMES[current()].Background end),
-		["Special"] = derive(function() return THEMES[current()].Special end),
-		["Border"] = derive(function() return THEMES[current()].Border end),
-		["Text"] = derive(function() return THEMES[current()].Text end),
+	local active = source(THEME_DEFAULT)
+	Theme.active = active
+	Theme.colors = table.freeze {
+		["Primary"] = derive(function() return THEMES[active()].Primary end),
+		["Secondary"] = derive(function() return THEMES[active()].Secondary end),
+		["Background"] = derive(function() return THEMES[active()].Background end),
+		["Special"] = derive(function() return THEMES[active()].Special end),
+		["Border"] = derive(function() return THEMES[active()].Border end),
+		["Text"] = derive(function() return THEMES[active()].Text end),
 	}
 
-	table.freeze(Themes)
+	table.freeze(Theme)
 end
 
-return Themes
+return Theme
