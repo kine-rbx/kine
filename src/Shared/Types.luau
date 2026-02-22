@@ -1,7 +1,11 @@
 --!strict
 
-export type function properties(component: type): type
+export type function props(component: type): type
 	assert(component:is("function"), "not a function")
 	local parameters = component:parameters()
-	return parameters.head and parameters.head[1] or types.singleton(nil)
+	local props = parameters.head and parameters.head[1]
+	assert(props and props:is("table"), "not a component function")
+	return props
 end
+
+return nil
