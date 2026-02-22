@@ -25,16 +25,16 @@ export type Connection<T...> = {
 
 local freeThread: thread? = nil
 
-local function run<T...>(callback: (T...) -> (), ...: T...)
+local function run<T...>(callback: (T...) -> (), ...: T...): ()
 	local thread = freeThread
 	freeThread = nil
 	callback(...)
 	freeThread = thread
 end
 
-local function runner(): ()
+local function runner<T...>(): ()
 	while true do
-		run(coroutine.yield())
+		(run :: (T...) -> ())(coroutine.yield())
 	end
 end
 
