@@ -1,3 +1,5 @@
+--!strict
+
 export type Dropdown = {}
 
 return function(): () -> ()
