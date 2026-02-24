@@ -1,61 +1,35 @@
 --!strict
 
 local PluginRoot = script:FindFirstAncestor("Kine")
-local Design = require(PluginRoot.Shared.Design)
-local Themes = require(PluginRoot.Shared.Themes)
+local Theme = require(PluginRoot.Shared.Theme)
 local Signal = require(PluginRoot.Common.Signal)
 
 local fluid = require(PluginRoot.Packages.fluid)
-local create = fluid.create
 
-local StyledButton = require(PluginRoot.Components.StyledButton)
+local TitleButton = require(PluginRoot.Components.Button.TitleButton)
+
+local TokensTitleBar = require(PluginRoot.Tokens.TitleBar)
 
 type Signal<T...> = Signal.Signal<T...>
-
-local function TitleButton(props: {
-	Name: string,
-	Index: number,
-
-	Text: string,
-
-	OnClick: Signal<>,
-})
-	return StyledButton {
-		Style = "Secondary",
-
-		Name = props.Name,
-
-		LayoutOrder = props.Index,
-
-		Size = UDim2.fromScale(1, 1),
-		SizeConstraint = Enum.SizeConstraint.RelativeYY,
-		AutomaticSize = Enum.AutomaticSize.None,
-
-		Font = Design.TITLE_BAR.BUTTON.TEXT_FONT,
-		Text = props.Text,
-
-		TextSize = Design.TITLE_BAR.BUTTON.TEXT_SIZE,
-		TextBounds = UDim2.fromScale(1, 1),
-
-		OnClick = props.OnClick
-	}
-end
+type UsedAs<T> = fluid.UsedAs<T>
 
 return function(props: {
-	RequestClose: Signal<>,
-	RequestMinimize: Signal<>?,
+	Title: UsedAs<string>,
+
+	OnClose: Signal<>,
+	OnMinimize: Signal<>?,
 })
-	return create("Frame") {
+	return fluid.create("Frame") {
 		Name = "TitleBar",
 
 		LayoutOrder = 0,
 
-		BackgroundColor3 = Themes.colors.Secondary,
+		BackgroundColor3 = Theme.colors.Secondary,
 		BorderSizePixel = 0,
 
-		Size = UDim2.new(1, 0, 0, Design.TITLE_BAR.HEIGHT),
+		Size = UDim2.new(1, 0, 0, TokensTitleBar.HEIGHT),
 
-		create("Frame") {
+		fluid.create("Frame") {
 			Name = "Buttons",
 
 			Size = UDim2.fromScale(1, 1),
@@ -64,26 +38,24 @@ return function(props: {
 			BorderSizePixel = 0,
 
 			TitleButton {
-				Name = "Close",
-				Index = 1,
+				Type = "Close",
 
-				Text = "X",
+				LayoutOrder = 1,
 
-				OnClick = props.RequestClose
+				OnClick = props.OnClose
 			},
-			if props.RequestMinimize then
+			if props.OnMinimize then
 				TitleButton {
-					Name = "Minimize",
-					Index = 0,
+					Type = "Minimize",
 
-					Text = "\u{2014}",
+					LayoutOrder = 0,
 
-					OnClick = props.RequestMinimize
+					OnClick = props.OnMinimize
 				}
 			else nil,
 
-			create("UIListLayout") {
-				Padding = UDim.new(0, Design.TITLE_BAR.BUTTON.PADDING),
+			fluid.create("UIListLayout") {
+				Padding = UDim.new(0, TokensTitleBar.SEPARATION),
 
 				FillDirection = Enum.FillDirection.Horizontal,
 				SortOrder = Enum.SortOrder.LayoutOrder,
