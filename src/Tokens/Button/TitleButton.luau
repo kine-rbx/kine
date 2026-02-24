@@ -13,11 +13,12 @@ type ButtonVariant = TokensButton.ButtonVariant
 type ButtonVisualState = TokensButton.ButtonVisualState
 
 return deepFreeze {
-	FONT = TokensGlobal.FONTS["MICHROMA"],
 	TEXT = {
 		["CLOSE"] = "X",
 		["MINIMIZE"] = "—",
 	},
+	TEXT_SIZE = 18,
+	FONT = TokensGlobal.FONTS["MICHROMA"],
 	COLOR = {
 		["CLOSE"] = TokensGlobal.PALETTE["BAD"] :: ButtonColor,
 		["MINIMIZE"] = "Secondary" :: ButtonColor,

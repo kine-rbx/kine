@@ -22,6 +22,8 @@ return function(props: {
 })
 	return Button {
 		Text = props.Type == "Close" and TokensTitleButton.TEXT["CLOSE"] or TokensTitleButton.TEXT["MINIMIZE"],
+		TextSize = TokensTitleButton.TEXT_SIZE,
+		Font = TokensTitleButton.FONT,
 
 		Variant = TokensTitleButton.VARIANT,
 		Color = props.Type == "Close" and TokensTitleButton.COLOR["CLOSE"] or TokensTitleButton.COLOR["MINIMIZE"],
