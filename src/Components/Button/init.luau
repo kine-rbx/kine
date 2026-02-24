@@ -18,6 +18,7 @@ type Source<T> = fluid.Source<T>
 type UsedAs<T> = fluid.UsedAs<T>
 type PressableState = Pressable.PressableState
 type ButtonVariant = TokensButton.ButtonVariant
+type ButtonColor = TokensButton.ButtonColor
 type ButtonVisualState = TokensButton.ButtonVisualState
 
 return function(props: {
@@ -27,8 +28,8 @@ return function(props: {
 	Text: UsedAs<string>?,
 	Icon: UsedAs<string>?,
 
-	Variant: UsedAs<ButtonVariant>?,
-	Color: UsedAs<ThemeColor>?,
+	Variant: ButtonVariant?,
+	Color: ButtonColor?,
 	Size: ("Small" | "Medium" | "Large" | vector)?,
 
 	Name: UsedAs<string>?,

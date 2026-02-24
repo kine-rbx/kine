@@ -83,16 +83,16 @@ return deepFreeze {
 	},
 	SIZE = {
 		["SMALL"] = vector.create(
-			TokensGlobal.PADDING["MEDIUM"] + TokensGlobal.TEXT_SIZES["SMALL"],
-			TokensGlobal.PADDING["MEDIUM"] + TokensGlobal.TEXT_SIZES["SMALL"]
+			TokensGlobal.PADDING["MEDIUM"] * 2 + TokensGlobal.TEXT_SIZES["SMALL"],
+			TokensGlobal.PADDING["MEDIUM"] * 2 + TokensGlobal.TEXT_SIZES["SMALL"]
 		),
 		["MEDIUM"] = vector.create(
-			TokensGlobal.PADDING["MEDIUM"] + TokensGlobal.TEXT_SIZES["MEDIUM"],
-			TokensGlobal.PADDING["MEDIUM"] + TokensGlobal.TEXT_SIZES["MEDIUM"]
+			TokensGlobal.PADDING["MEDIUM"] * 2 + TokensGlobal.TEXT_SIZES["MEDIUM"],
+			TokensGlobal.PADDING["MEDIUM"] * 2 + TokensGlobal.TEXT_SIZES["MEDIUM"]
 		),
 		["LARGE"] = vector.create(
-			TokensGlobal.PADDING["MEDIUM"] + TokensGlobal.TEXT_SIZES["LARGE"],
-			TokensGlobal.PADDING["MEDIUM"] + TokensGlobal.TEXT_SIZES["LARGE"]
+			TokensGlobal.PADDING["MEDIUM"] * 2 + TokensGlobal.TEXT_SIZES["LARGE"],
+			TokensGlobal.PADDING["MEDIUM"] * 2 + TokensGlobal.TEXT_SIZES["LARGE"]
 		),
 	},
 	PADDING = vector.create(
