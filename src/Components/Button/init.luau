@@ -9,7 +9,9 @@ local styleTweens = require(PluginRoot.Helpers.styleTweens)
 local fluid = require(PluginRoot.Packages.fluid)
 
 local Pressable = require(PluginRoot.Components.Primitives.Pressable)
+local Padding = require(PluginRoot.Components.Decorators.Padding)
 
+local TokensGlobal = require(PluginRoot.Tokens.Global)
 local TokensButton = require(PluginRoot.Tokens.Button)
 
 type ThemeColor = Theme.ThemeColor
@@ -26,11 +28,16 @@ return function(props: {
 	State: PressableState?,
 
 	Text: UsedAs<string>?,
-	Icon: UsedAs<string>?,
+	TextSize: number?,
+	Font: UsedAs<Font>?,
+
+	IconLeft: UsedAs<string>?,
+	IconRight: UsedAs<string>?,
 
 	Variant: ButtonVariant?,
 	Color: ButtonColor?,
 	Size: ("Small" | "Medium" | "Large" | vector)?,
+	Padding: vector?,
 
 	Name: UsedAs<string>?,
 
@@ -89,14 +96,19 @@ return function(props: {
 	end)
 
 	local size: vector
+	local sizeText: number
 	if not props.Size or props.Size == "Medium" then
 		size = TokensButton.SIZE["MEDIUM"]
+		sizeText = TokensGlobal.TEXT_SIZES["MEDIUM"]
 	elseif props.Size == "Large" then
 		size = TokensButton.SIZE["LARGE"]
+		sizeText = TokensGlobal.TEXT_SIZES["MEDIUM"]
 	elseif props.Size == "Small" then
 		size = TokensButton.SIZE["SMALL"]
+		sizeText = TokensGlobal.TEXT_SIZES["SMALL"]
 	else
 		size = props.Size
+		sizeText = TokensGlobal.TEXT_SIZES["MEDIUM"]
 	end
 
 	return fluid.create("Frame") {
@@ -119,6 +131,8 @@ return function(props: {
 			Transparency = tweens.borderTransparency,
 		},
 
+		Padding(props.Padding or TokensButton.PADDING),
+
 		Pressable {
 			Disabled = props.Disabled,
 			State = state,
@@ -131,5 +145,24 @@ return function(props: {
 			OnDown = props.OnDown,
 			OnUp = props.OnUp,
 		},
+
+		if props.Text then
+			fluid.create("TextLabel") {
+				Name = "Text",
+
+				Size = UDim2.fromScale(1, 1),
+				AutomaticSize = props.AutomaticSize,
+
+				BackgroundTransparency = 1,
+
+				FontFace = props.Font,
+				Text = props.Text,
+				TextSize = props.TextSize or TokensGlobal.TEXT_SIZES["MEDIUM"],
+				TextColor3 = Theme.colors.Text,
+
+				TextXAlignment = Enum.TextXAlignment.Center,
+				TextYAlignment = Enum.TextYAlignment.Center,
+			}
+		else nil,
 	}
 end
