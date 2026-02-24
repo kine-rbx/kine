@@ -1,7 +1,6 @@
 --!strict
 
 local PluginRoot = script:FindFirstAncestor("Kine")
-local Design = require(PluginRoot.Shared.Design)
 local Inputs = require(PluginRoot.Shared.Inputs)
 local Signal = require(PluginRoot.Common.Signal)
 
@@ -54,7 +53,7 @@ return function(props: {
 	return fluid.create("Frame") {
 		Name = "Pressable",
 
-		Size = props.Size or UDim2.fromOffset(Design.BUTTON.SIZE_DEFAULT.x, Design.BUTTON.SIZE_DEFAULT.y),
+		Size = props.Size,
 
 		BackgroundTransparency = 1,
 
