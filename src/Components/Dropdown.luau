@@ -1,5 +1,6 @@
 --!strict
 
+export type DropdownDirection = "Bottom" | "Right"
 export type Dropdown = {}
 
 return function(): () -> ()
