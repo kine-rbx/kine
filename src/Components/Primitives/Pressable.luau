@@ -44,7 +44,7 @@ return function(props: {
 
 	local function guard(callback: (...any) -> ()): (...any) -> ()
 		return function(...: any)
-			if not props.Disabled or not props.Disabled() then
+			if not fluid.read(props.Disabled) then
 				callback(...)
 			end
 		end

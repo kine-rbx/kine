@@ -155,7 +155,7 @@ return function(props: {
 
 				BackgroundTransparency = 1,
 
-				FontFace = props.Font,
+				FontFace = props.Font or TokensGlobal.FONTS["DEFAULT"],
 				Text = props.Text,
 				TextSize = props.TextSize or TokensGlobal.TEXT_SIZES["MEDIUM"],
 				TextColor3 = Theme.colors.Text,
