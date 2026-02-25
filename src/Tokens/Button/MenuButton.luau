@@ -12,5 +12,4 @@ type ButtonVariant = TokensButton.ButtonVariant
 return tokens(function() return {
 	COLOR = Theme.colors.Secondary,
 	VARIANT = "Ghost" :: ButtonVariant,
-	PADDING = vector.zero,
 } end)

@@ -107,13 +107,13 @@ return function(props: {
 			Color = Theme.colors.Border
 		},
 
-		fluid.action(Control.registerWindow({
+		fluid.action(Control.registerWindow {
 			focus = function()
 				state.focused(true)
 			end,
 			unfocus = function()
 				state.focused(false)
 			end,
-		}) :: (Instance) -> ()),
+		}),
 	}
 end

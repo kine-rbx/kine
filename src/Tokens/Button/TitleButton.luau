@@ -28,6 +28,7 @@ return tokens(function() return {
 		TokensTitleBar.HEIGHT,
 		TokensTitleBar.HEIGHT
 	),
+	ROUNDING = 0,
 	PADDING = vector.create(
 		TokensGlobal.PADDING["LARGE"],
 		TokensGlobal.PADDING["LARGE"]

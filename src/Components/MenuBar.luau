@@ -31,6 +31,7 @@ return function(props: {
 		Size = UDim2.fromScale(1, 1),
 
 		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
 
 		Padding(MenuBarTokens.PADDING),
 

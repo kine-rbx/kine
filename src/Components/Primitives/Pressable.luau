@@ -42,7 +42,7 @@ return function(props: {
 		end)
 	end
 
-	local function guard(callback: (...any) -> ()): (...any) -> ()
+	local function guard(callback: () -> ()): () -> ()
 		return function(...: any)
 			if not fluid.read(props.Disabled) then
 				callback(...)
@@ -53,32 +53,35 @@ return function(props: {
 	return fluid.create("Frame") {
 		Name = "Pressable",
 
+		Active = true,
+
 		Size = props.Size,
 
 		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
 
 		(props.OnClick) and fluid.action(Control.connectObject("LeftClick", guard(function()
 			props.OnClick:fire()
-		end)) :: (Instance) -> ()),
+		end))),
 
 		(state or props.OnDown) and fluid.action(Control.connectObject("LeftDown", guard(function()
 			if state then state.clicked(true) end
 			if props.OnDown then props.OnDown:fire() end
-		end)) :: (Instance) -> ()),
+		end))),
 
 		(state or props.OnUp) and fluid.action(Control.connectObject("LeftUp", guard(function()
 			if state then state.clicked(false) end
 			if props.OnUp then props.OnUp:fire() end
-		end)) :: (Instance) -> ()),
+		end))),
 
 		(state or props.OnEnter) and fluid.action(Control.connectObject("Enter", guard(function()
 			if state then state.hovered(true) end
 			if props.OnEnter then props.OnEnter:fire() end
-		end)) :: (Instance) -> ()),
+		end))),
 
 		(state or props.OnLeave) and fluid.action(Control.connectObject("Leave", guard(function()
 			if state then state.hovered(false) end
 			if props.OnLeave then props.OnLeave:fire() end
-		end)) :: (Instance) -> ())
+		end)))
 	}
 end

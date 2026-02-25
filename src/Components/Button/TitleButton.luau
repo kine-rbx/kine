@@ -28,6 +28,8 @@ return function(props: {
 		Variant = TokensTitleButton.VARIANT,
 		Color = props.Type == "Close" and TokensTitleButton.COLOR["CLOSE"] or TokensTitleButton.COLOR["MINIMIZE"],
 		Size = TokensTitleButton.SIZE,
+		Padding = TokensTitleButton.PADDING,
+		Rounding = TokensTitleButton.ROUNDING,
 
 		Name = props.Type,
 

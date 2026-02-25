@@ -188,8 +188,8 @@ local Control = {}
 
 function Control.connectObject(
 	interaction: Interaction, callback: () -> ()
-): (GuiObject) -> ()
-	return function(element)
+): (Instance) -> () -- Instance because fluid.action
+	return function(element: GuiObject)
 		if not callbacks[element] then
 			callbacks[element] = {[interaction] = callback}
 		else
@@ -204,7 +204,7 @@ function Control.connectObject(
 				callbacks[element] = nil
 			end
 		end)
-	end
+	end :: (Instance) -> ()
 end
 
 function Control.focusObject(element: GuiObject): ()
@@ -214,8 +214,8 @@ end
 function Control.registerWindow(methods: {
 	focus: () -> (),
 	unfocus: () -> ()
-}): (CanvasGroup) -> ()
-	return function(instance)
+}): (Instance) -> () -- Instance again because fluid.action
+	return function(instance: CanvasGroup)
 		for index, window in windows do
 			if window.instance == instance then
 				table.remove(windows, index)
@@ -249,7 +249,7 @@ function Control.registerWindow(methods: {
 		fluid.cleanup(function()
 			remove(windows, window)
 		end)
-	end
+	end :: (Instance) -> ()
 end
 
 function Control._init(): ()

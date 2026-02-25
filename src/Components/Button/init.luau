@@ -38,6 +38,7 @@ return function(props: {
 	Color: ButtonColor?,
 	Size: ("Small" | "Medium" | "Large" | vector)?,
 	Padding: vector?,
+	Rounding: number?,
 
 	Name: UsedAs<string>?,
 
@@ -67,6 +68,7 @@ return function(props: {
 	local tweens = styleTweens {
 		backgroundColor = {
 			callback = function()
+				print("wow")
 				return TokensButton.STYLE["BACKGROUND_COLOR"](visual)
 			end,
 			tweenInfo = tweenInfo
@@ -117,6 +119,7 @@ return function(props: {
 
 		BackgroundColor3 = tweens.backgroundColor,
 		BackgroundTransparency = tweens.backgroundTransparency,
+		BorderSizePixel = 0,
 
 		fluid.create("UIStroke") {
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
@@ -124,6 +127,10 @@ return function(props: {
 
 			Color = tweens.borderColor,
 			Transparency = tweens.borderTransparency,
+		},
+
+		fluid.create("UICorner") {
+			CornerRadius = UDim.new(0, props.Rounding or TokensButton.ROUNDING)
 		},
 
 		Padding(props.Padding or TokensButton.PADDING),
@@ -149,6 +156,7 @@ return function(props: {
 				AutomaticSize = props.AutomaticSize,
 
 				BackgroundTransparency = 1,
+				BorderSizePixel = 0,
 
 				FontFace = props.Font or TokensGlobal.FONTS["DEFAULT"],
 				Text = props.Text,
