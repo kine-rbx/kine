@@ -7,7 +7,6 @@ local PluginRoot = script:FindFirstAncestor("Kine")
 local Config = require(PluginRoot.Shared.Config)
 
 local fluid = require(PluginRoot.Packages.fluid)
-local root, cleanup, interval = fluid.root, fluid.cleanup, fluid.interval
 
 export type Interaction =
 	| "LeftClick" | "LeftDown" | "LeftUp"
@@ -185,9 +184,9 @@ local function update(action: InputAction, element: GuiObject?, input: InputType
 	end
 end
 
-local Inputs = {}
+local Control = {}
 
-function Inputs.connectObject(
+function Control.connectObject(
 	interaction: Interaction, callback: () -> ()
 ): (GuiObject) -> ()
 	return function(element)
@@ -197,7 +196,7 @@ function Inputs.connectObject(
 			callbacks[element][interaction] = callback
 		end
 
-		cleanup(function()
+		fluid.cleanup(function()
 			if not callbacks[element] then return end
 			callbacks[element][interaction] = nil
 
@@ -208,11 +207,11 @@ function Inputs.connectObject(
 	end
 end
 
-function Inputs.focusObject(element: GuiObject): ()
+function Control.focusObject(element: GuiObject): ()
 	if focused then focused.focused = element end
 end
 
-function Inputs.registerWindow(methods: {
+function Control.registerWindow(methods: {
 	focus: () -> (),
 	unfocus: () -> ()
 }): (CanvasGroup) -> ()
@@ -247,16 +246,16 @@ function Inputs.registerWindow(methods: {
 		end
 
 		focus(window)
-		cleanup(function()
+		fluid.cleanup(function()
 			remove(windows, window)
 		end)
 	end
 end
 
-function Inputs._init(): ()
-	Inputs._init = function() end
+function Control._init(): ()
+	Control._init = function() end
 
-	local elements = interval(function(): {GuiObject}
+	local elements = fluid.interval(function(): {GuiObject}
 		if #windows == 0 then return {} end
 
 		local position = UserInputService:GetMouseLocation()
@@ -304,7 +303,7 @@ function Inputs._init(): ()
 		end
 	end)
 
-	table.freeze(Inputs)
+	table.freeze(Control)
 end
 
-return Inputs
+return Control

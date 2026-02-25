@@ -55,7 +55,7 @@ end
 
 local function load(): ()
 	require(PluginRoot.Shared.Plugin)._init(plugin)
-	require(PluginRoot.Shared.Inputs)._init()
+	require(PluginRoot.Shared.Control)._init()
 	require(PluginRoot.Shared.Theme)._init()
 	init()
 end

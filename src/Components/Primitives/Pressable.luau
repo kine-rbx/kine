@@ -1,7 +1,7 @@
 --!strict
 
 local PluginRoot = script:FindFirstAncestor("Kine")
-local Inputs = require(PluginRoot.Shared.Inputs)
+local Control = require(PluginRoot.Shared.Control)
 local Signal = require(PluginRoot.Common.Signal)
 
 local fluid = require(PluginRoot.Packages.fluid)
@@ -57,26 +57,26 @@ return function(props: {
 
 		BackgroundTransparency = 1,
 
-		(props.OnClick) and fluid.action(Inputs.connectObject("LeftClick", guard(function()
+		(props.OnClick) and fluid.action(Control.connectObject("LeftClick", guard(function()
 			props.OnClick:fire()
 		end)) :: (Instance) -> ()),
 
-		(state or props.OnDown) and fluid.action(Inputs.connectObject("LeftDown", guard(function()
+		(state or props.OnDown) and fluid.action(Control.connectObject("LeftDown", guard(function()
 			if state then state.clicked(true) end
 			if props.OnDown then props.OnDown:fire() end
 		end)) :: (Instance) -> ()),
 
-		(state or props.OnUp) and fluid.action(Inputs.connectObject("LeftUp", guard(function()
+		(state or props.OnUp) and fluid.action(Control.connectObject("LeftUp", guard(function()
 			if state then state.clicked(false) end
 			if props.OnUp then props.OnUp:fire() end
 		end)) :: (Instance) -> ()),
 
-		(state or props.OnEnter) and fluid.action(Inputs.connectObject("Enter", guard(function()
+		(state or props.OnEnter) and fluid.action(Control.connectObject("Enter", guard(function()
 			if state then state.hovered(true) end
 			if props.OnEnter then props.OnEnter:fire() end
 		end)) :: (Instance) -> ()),
 
-		(state or props.OnLeave) and fluid.action(Inputs.connectObject("Leave", guard(function()
+		(state or props.OnLeave) and fluid.action(Control.connectObject("Leave", guard(function()
 			if state then state.hovered(false) end
 			if props.OnLeave then props.OnLeave:fire() end
 		end)) :: (Instance) -> ())

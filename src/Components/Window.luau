@@ -1,7 +1,7 @@
 --!strict
 
 local PluginRoot = script:FindFirstAncestor("Kine")
-local Inputs = require(PluginRoot.Shared.Inputs)
+local Control = require(PluginRoot.Shared.Control)
 local Theme = require(PluginRoot.Shared.Theme)
 
 local styleTweens = require(PluginRoot.Helpers.styleTweens)
@@ -107,7 +107,7 @@ return function(props: {
 			Color = Theme.colors.Border
 		},
 
-		fluid.action(Inputs.registerWindow({
+		fluid.action(Control.registerWindow({
 			focus = function()
 				state.focused(true)
 			end,
