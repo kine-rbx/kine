@@ -1,20 +1,17 @@
 --!strict
 
 local PluginRoot = script:FindFirstAncestor("Kine")
-local Design = require(PluginRoot.Shared.Design)
 local Plugin = require(PluginRoot.Shared.Plugin)
 local Signal = require(PluginRoot.Common.Signal)
 
 local fluid = require(PluginRoot.Packages.fluid)
-local root, source, effect, create, cleanup, mount = fluid.root, fluid.source, fluid.effect, fluid.create, fluid.cleanup, fluid.mount
 
 local Window = require(PluginRoot.Components.Window)
 local TitleBar = require(PluginRoot.Components.TitleBar)
 local MenuBar = require(PluginRoot.Components.MenuBar)
 
-local pluginButton = Plugin.buttons["Editor"]
-
-local activeGui: ScreenGui? = nil
+local TokensWindow = require(PluginRoot.Tokens.Window)
+local TokensEditorWindow = require(PluginRoot.Tokens.Window.EditorWindow)
 
 type Source<T> = fluid.Source<T>
 type Signal<T...> = Signal.Signal<T...>
@@ -26,9 +23,13 @@ type WindowContext = {
 	position: Source<vector>,
 	size: Source<vector>,
 
-	requestClose: Signal<>,
-	requestMinimize: Signal<>
+	onClose: Signal<>,
+	onMinimize: Signal<>
 }
+
+local pluginButton = Plugin.buttons["Editor"]
+
+local activeGui: ScreenGui? = nil
 
 return function(uiFolder: Folder): ()
 	local destroy: () -> ()? = nil
@@ -44,14 +45,14 @@ return function(uiFolder: Folder): ()
 		local size = window and window.size()
 
 		window = {
-			open = source(true),
-			minimized = source(false),
+			open = fluid.source(true),
+			minimized = fluid.source(false),
 
-			position = source(position or vector.create(math.huge, 0)),
-			size = source(size or Design.WINDOWS["EDITOR"].SIZE_DEFAULT),
+			position = fluid.source(position or vector.create(math.huge, 0)),
+			size = fluid.source(size or TokensEditorWindow.SIZE_DEFAULT),
 
-			requestClose = Signal.new(),
-			requestMinimize = Signal.new()
+			onClose = Signal.new(),
+			onMinimize = Signal.new()
 		}
 	end
 
@@ -68,12 +69,12 @@ return function(uiFolder: Folder): ()
 			window.position(vector.create(activeGui.AbsoluteSize.X, activeGui.AbsoluteSize.Y) // 2)
 		end
 
-		window.requestClose:connect(die)
-		window.requestMinimize:connect(function()
+		window.onClose:connect(die)
+		window.onMinimize:connect(function()
 			window.minimized(not window.minimized())
 		end)
 
-		effect(function()
+		fluid.effect(function()
 			if window.minimized() then
 				pluginButton.reset()
 			end
@@ -87,17 +88,23 @@ return function(uiFolder: Folder): ()
 				Size = window.size,
 			}
 
-			mount(function()
+			fluid.mount(function()
 				local titleBar = TitleBar {
-					RequestClose = window.requestClose,
-					RequestMinimize = window.requestMinimize
+					Title = TokensEditorWindow.TITLE,
+
+					OnClose = window.onClose,
+					OnMinimize = window.onMinimize
 				}
+
 				local menuBar = MenuBar {
-					{
-						Text = "File",
-						Dropdown = {}
+					Items = {
+						{
+							Text = "File",
+							Dropdown = {}
+						}
 					}
 				}
+
 				local container = nil
 
 				return {
@@ -105,30 +112,30 @@ return function(uiFolder: Folder): ()
 					menuBar,
 					container,
 
-					create("UIListLayout") {
+					fluid.create("UIListLayout") {
 						FillDirection = Enum.FillDirection.Vertical,
 						SortOrder = Enum.SortOrder.LayoutOrder,
 
 						VerticalAlignment = Enum.VerticalAlignment.Top,
-					}
+					},
 				}
 			end, frame)
 
-			effect(function()
+			fluid.effect(function()
 				frame.Visible = not window.minimized()
 			end)
 
 			return {frame}
 		end
 
-		mount(ui, activeGui)
+		fluid.mount(ui, activeGui)
 
-		cleanup(function()
+		fluid.cleanup(function()
 			pluginButton.reset()
 			window.open(false)
 			window.minimized(false)
 
-			task.wait(Design.WINDOW.TRANSITION.TIME)
+			task.wait(TokensWindow.TRANSITION.TIME)
 			if activeGui and activeGui.Parent then activeGui:Destroy() end
 		end)
 	end
@@ -141,18 +148,18 @@ return function(uiFolder: Folder): ()
 				die()
 			end
 		else
-			activeGui = create("ScreenGui") {
+			activeGui = fluid.create("ScreenGui") {
 				Name = "Editor",
 				ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 
 				Parent = uiFolder
 			}
 			die()
-			destroy = root(setup)
+			destroy = fluid.root(setup)
 		end
 	end)
 
-	cleanup(function()
+	fluid.cleanup(function()
 		connection:disconnect()
 	end)
 end
