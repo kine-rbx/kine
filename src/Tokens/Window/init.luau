@@ -2,11 +2,11 @@
 
 local PluginRoot = script:FindFirstAncestor("Kine")
 
-local deepFreeze = require(PluginRoot.Helpers.deepFreeze)
+local tokens = require(PluginRoot.Helpers.tokens)
 
 local TokensGlobal = require(PluginRoot.Tokens.Global)
 
-return deepFreeze {
+return tokens(function() return {
 	ROUNDING = TokensGlobal.ROUNDING["MEDIUM"],
 	TRANSLUCENCY = 0.2,
 	COLORS = {
@@ -24,4 +24,4 @@ return deepFreeze {
 			["FOCUS"] = TweenInfo.new(0.1, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out),
 		},
 	},
-}
+} end)

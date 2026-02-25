@@ -3,7 +3,7 @@
 local PluginRoot = script:FindFirstAncestor("Kine")
 local Theme = require(PluginRoot.Shared.Theme)
 
-local deepFreeze = require(PluginRoot.Helpers.deepFreeze)
+local tokens = require(PluginRoot.Helpers.tokens)
 
 local fluid = require(PluginRoot.Packages.fluid)
 
@@ -28,7 +28,7 @@ export type ButtonVisualState = {
 	read color: ButtonColor,
 }
 
-return deepFreeze {
+return tokens(function() return {
 	STYLE = {
 		["BACKGROUND_COLOR"] = function(state: ButtonVisualState): Color3
 			local color = fluid.read(state.color)
@@ -110,4 +110,4 @@ return deepFreeze {
 			["CLICK"] = TweenInfo.new(0),
 		},
 	},
-}
+} end)

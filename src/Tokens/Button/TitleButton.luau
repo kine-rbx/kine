@@ -2,7 +2,7 @@
 
 local PluginRoot = script:FindFirstAncestor("Kine")
 
-local deepFreeze = require(PluginRoot.Helpers.deepFreeze)
+local tokens = require(PluginRoot.Helpers.tokens)
 
 local TokensGlobal = require(PluginRoot.Tokens.Global)
 local TokensButton = require(PluginRoot.Tokens.Button)
@@ -12,7 +12,7 @@ type ButtonColor = TokensButton.ButtonColor
 type ButtonVariant = TokensButton.ButtonVariant
 type ButtonVisualState = TokensButton.ButtonVisualState
 
-return deepFreeze {
+return tokens(function() return {
 	TEXT = {
 		["CLOSE"] = "X",
 		["MINIMIZE"] = "—",
@@ -32,4 +32,4 @@ return deepFreeze {
 		TokensGlobal.PADDING["LARGE"],
 		TokensGlobal.PADDING["LARGE"]
 	),
-}
+} end)

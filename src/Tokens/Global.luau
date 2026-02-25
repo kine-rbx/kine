@@ -3,13 +3,13 @@
 local PluginRoot = script:FindFirstAncestor("Kine")
 local Theme = require(PluginRoot.Shared.Theme)
 
-local deepFreeze = require(PluginRoot.Helpers.deepFreeze)
+local tokens = require(PluginRoot.Helpers.tokens)
 
 local fluid = require(PluginRoot.Packages.fluid)
 
 local ICON_FORMAT = "rbxasset://studio_svg_textures/Shared/Alerts/%s/Standard/%s.png" :: "%s%s"
 
-return deepFreeze {
+return tokens(function() return {
 	PALETTE = {
 		["BAD"] = fluid.derive(function()
 			return if Theme.mode() == "Light"
@@ -66,4 +66,4 @@ return deepFreeze {
 		["VERY_SLOW"] = 0.500,
 	},
 	FADE = 0.3,
-}
+} end)

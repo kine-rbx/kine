@@ -1,5 +1,9 @@
 --!strict
 
+local PluginRoot = script:FindFirstAncestor("Kine")
+
+local fluid = require(PluginRoot.Packages.fluid)
+
 type function deepfreeze(t: type): type
 	assert(t:is("table"), "must be a table")
 
@@ -30,4 +34,11 @@ local function deepFreeze<T>(t: T): deepfreeze<T>
 	return t
 end
 
-return deepFreeze
+return function<T>(callback: () -> T): deepfreeze<T>
+	local t: deepfreeze<T>
+	fluid.root(function()
+		t = deepFreeze(callback())
+	end)
+
+	return t
+end
