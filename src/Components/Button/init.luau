@@ -63,7 +63,7 @@ return function(props: {
 		color = props.Color or "Primary" :: ThemeColor,
 	}
 
-	local tweenInfo = fluid.source(TokensButton.TRANSITION["TWEEN_INFO"].CLICK)
+	local tweenInfo = fluid.source(TokensButton.TRANSITION.TWEEN_INFO["CLICK"])
 	local tweens = styleTweens {
 		backgroundColor = {
 			callback = function()
