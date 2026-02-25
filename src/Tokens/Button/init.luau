@@ -95,7 +95,7 @@ return tokens(function() return {
 			TokensGlobal.PADDING["MEDIUM"] * 2 + TokensGlobal.TEXT_SIZES["LARGE"]
 		),
 	},
-	ROUNDING = TokensGlobal.ROUNDING["MEDIUM"],
+	ROUNDING = TokensGlobal.ROUNDING["SMALL"],
 	PADDING = vector.create(
 		TokensGlobal.PADDING["MEDIUM"],
 		TokensGlobal.PADDING["MEDIUM"]

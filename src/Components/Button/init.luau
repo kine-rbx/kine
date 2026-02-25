@@ -68,7 +68,6 @@ return function(props: {
 	local tweens = styleTweens {
 		backgroundColor = {
 			callback = function()
-				print("wow")
 				return TokensButton.STYLE["BACKGROUND_COLOR"](visual)
 			end,
 			tweenInfo = tweenInfo
