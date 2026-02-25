@@ -96,19 +96,14 @@ return function(props: {
 	end)
 
 	local size: vector
-	local sizeText: number
 	if not props.Size or props.Size == "Medium" then
 		size = TokensButton.SIZE["MEDIUM"]
-		sizeText = TokensGlobal.TEXT_SIZES["MEDIUM"]
 	elseif props.Size == "Large" then
 		size = TokensButton.SIZE["LARGE"]
-		sizeText = TokensGlobal.TEXT_SIZES["MEDIUM"]
 	elseif props.Size == "Small" then
 		size = TokensButton.SIZE["SMALL"]
-		sizeText = TokensGlobal.TEXT_SIZES["SMALL"]
 	else
 		size = props.Size
-		sizeText = TokensGlobal.TEXT_SIZES["MEDIUM"]
 	end
 
 	return fluid.create("Frame") {
