@@ -26,7 +26,12 @@ return function(props: {
 		Font = TokensTitleButton.FONT,
 
 		Variant = TokensTitleButton.VARIANT,
-		Color = props.Type == "Close" and TokensTitleButton.COLOR["CLOSE"] or TokensTitleButton.COLOR["MINIMIZE"],
+		Colors = if props.Type == "Close" then {
+			Base = TokensTitleButton.COLOR["CLOSE"],
+			Hover = TokensTitleButton.COLOR["CLOSE"],
+		} else {
+			Base = TokensTitleButton.COLOR["MINIMIZE"],
+		},
 		Size = TokensTitleButton.SIZE,
 		Padding = TokensTitleButton.PADDING,
 		Rounding = TokensTitleButton.ROUNDING,

@@ -14,6 +14,11 @@ type Source<T> = fluid.Source<T>
 type UsedAs<T> = fluid.UsedAs<T>
 
 export type ButtonColor = UsedAs<ThemeColor | Color3>
+export type ButtonColors = {
+	["Base"]: ButtonColor,
+	["Hover"]: ButtonColor?,
+	["Click"]: ButtonColor?,
+}
 export type ButtonVariant = UsedAs<
 	| "Solid"
 	| "Ghost"
@@ -24,26 +29,34 @@ export type ButtonVariant = UsedAs<
 export type ButtonVisualState = {
 	read hovered: Source<boolean>,
 	read clicked: Source<boolean>,
+	read disabled: Source<boolean>?,
 	read variant: ButtonVariant,
-	read color: ButtonColor,
+	read colors: ButtonColors,
 }
+
+local function getColor(color: ButtonColor): Color3
+	color = fluid.read(color)
+	return typeof(color) == "Color3" and color or Theme.colors[color]()
+end
 
 return tokens(function() return {
 	STYLE = {
 		["BACKGROUND_COLOR"] = function(state: ButtonVisualState): Color3
-			local color = fluid.read(state.color)
-			local color3 = typeof(color) == "Color3" and color or Theme.colors[color]()
 			local variant = fluid.read(state.variant)
 
 			if variant == "Solid" or variant == "Ghost" then
 				if state.clicked() then
-					return color3:Lerp(Theme.colors.Background(), TokensGlobal.FADE)
+					return if state.colors["Click"]
+						then getColor(state.colors["Click"])
+						else getColor(state.colors["Base"]):Lerp(Theme.colors.Background(), TokensGlobal.FADE["LOWERED"]())
 				elseif state.hovered() then
-					return color3:Lerp(Theme.colors.Text(), TokensGlobal.FADE)
+					return if state.colors["Hover"]
+						then getColor(state.colors["Hover"])
+						else getColor(state.colors["Base"]):Lerp(Theme.colors.Text(), TokensGlobal.FADE["ELEVATED"]())
 				end
 			end
 
-			return color3
+			return getColor(state.colors["Base"])
 		end,
 		["BACKGROUND_TRANSPARENCY"] = function(state: ButtonVisualState): number
 			local variant = fluid.read(state.variant)
@@ -57,19 +70,21 @@ return tokens(function() return {
 			return 0
 		end,
 		["BORDER_COLOR"] = function(state: ButtonVisualState): Color3
-			local color = fluid.read(state.color)
-			local color3 = typeof(color) == "Color3" and color or Theme.colors[color]()
 			local variant = fluid.read(state.variant)
 
 			if variant == "Border" then
 				if state.clicked() then
-					return color3:Lerp(Theme.colors.Background(), TokensGlobal.FADE)
+					return if state.colors["Click"]
+						then getColor(state.colors["Click"])
+						else getColor(state.colors["Base"]):Lerp(Theme.colors.Background(), TokensGlobal.FADE["LOWERED"]())
 				elseif state.hovered() then
-					return color3:Lerp(Theme.colors.Text(), TokensGlobal.FADE)
+					return if state.colors["Hover"]
+						then getColor(state.colors["Hover"])
+						else getColor(state.colors["Base"]):Lerp(Theme.colors.Text(), TokensGlobal.FADE["ELEVATED"]())
 				end
 			end
 
-			return color3
+			return getColor(state.colors["Base"])
 		end,
 		["BORDER_TRANSPARENCY"] = function(state: ButtonVisualState): number
 			local variant = fluid.read(state.variant)

@@ -20,7 +20,7 @@ type Source<T> = fluid.Source<T>
 type UsedAs<T> = fluid.UsedAs<T>
 type PressableState = Pressable.PressableState
 type ButtonVariant = TokensButton.ButtonVariant
-type ButtonColor = TokensButton.ButtonColor
+type ButtonColors = TokensButton.ButtonColors
 type ButtonVisualState = TokensButton.ButtonVisualState
 
 return function(props: {
@@ -34,8 +34,8 @@ return function(props: {
 	IconLeft: UsedAs<string>?,
 	IconRight: UsedAs<string>?,
 
+	Colors: ButtonColors?,
 	Variant: ButtonVariant?,
-	Color: ButtonColor?,
 	Size: ("Small" | "Medium" | "Large" | vector)?,
 	Padding: vector?,
 	Rounding: number?,
@@ -60,8 +60,9 @@ return function(props: {
 	local visual: ButtonVisualState = {
 		hovered = state.hovered,
 		clicked = state.clicked,
+		disabled = props.Disabled,
 		variant = props.Variant or "Solid" :: ButtonVariant,
-		color = props.Color or "Primary" :: ThemeColor,
+		colors = props.Colors or {["Base"] = "Primary" :: ThemeColor},
 	}
 
 	local tweenInfo = fluid.source(TokensButton.TRANSITION.TWEEN_INFO["CLICK"])

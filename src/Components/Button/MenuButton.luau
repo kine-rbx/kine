@@ -50,7 +50,7 @@ return function(props: {
 		IconRight = props.IconRight,
 
 		Variant = TokensMenuButton.VARIANT,
-		Color = TokensMenuButton.COLOR,
+		Colors = {Base = TokensMenuButton.COLOR},
 		Padding = TokensMenuButton.PADDING,
 
 		Name = props.Name or fluid.read(props.Text),
