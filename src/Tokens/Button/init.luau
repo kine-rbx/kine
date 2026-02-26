@@ -62,7 +62,7 @@ return tokens(function() return {
 			local variant = fluid.read(state.variant)
 
 			if variant == "Ghost" then
-				return state.hovered() and 0 or 1
+				return (state.hovered() or state.clicked()) and 0 or 1
 			elseif variant ~= "Solid" then
 				return 1
 			end
