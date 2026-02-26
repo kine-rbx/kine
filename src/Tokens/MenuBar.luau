@@ -15,5 +15,5 @@ return tokens(function() return {
 		TokensGlobal.PADDING["SMALL"],
 		TokensGlobal.PADDING["SMALL"]
 	),
-	SEPARATION = 1,
+	SEPARATION = TokensGlobal.PADDING["MEDIUM"],
 } end)

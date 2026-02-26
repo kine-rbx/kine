@@ -24,7 +24,7 @@ type WindowContext = {
 	size: Source<vector>,
 
 	onClose: Signal<>,
-	onMinimize: Signal<>
+	onMinimize: Signal<>,
 }
 
 local pluginButton = Plugin.buttons["Editor"]
@@ -52,7 +52,7 @@ return function(uiFolder: Folder): ()
 			size = fluid.source(size or TokensEditorWindow.SIZE_DEFAULT),
 
 			onClose = Signal.new(),
-			onMinimize = Signal.new()
+			onMinimize = Signal.new(),
 		}
 	end
 
@@ -93,7 +93,7 @@ return function(uiFolder: Folder): ()
 					Title = TokensEditorWindow.TITLE,
 
 					OnClose = window.onClose,
-					OnMinimize = window.onMinimize
+					OnMinimize = window.onMinimize,
 				}
 
 				local menuBar = MenuBar {
@@ -101,8 +101,8 @@ return function(uiFolder: Folder): ()
 						{
 							Text = "File",
 							Dropdown = {}
-						}
-					}
+						},
+					},
 				}
 
 				local container = nil
@@ -152,7 +152,7 @@ return function(uiFolder: Folder): ()
 				Name = "Editor",
 				ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 
-				Parent = uiFolder
+				Parent = uiFolder,
 			}
 			die()
 			destroy = fluid.root(setup)

@@ -152,7 +152,9 @@ return function(props: {
 
 			Image = props.IconLeft,
 			ScaleType = Enum.ScaleType.Fit,
-		}.Parent = getContainer()
+
+			Parent = getContainer(),
+		}
 	end
 
 	if props.IconRight then
@@ -169,7 +171,9 @@ return function(props: {
 
 			Image = props.IconRight,
 			ScaleType = Enum.ScaleType.Fit,
-		}.Parent = getContainer()
+
+			Parent = getContainer(),
+		}
 	end
 
 	if props.Text then
@@ -191,7 +195,9 @@ return function(props: {
 
 			TextXAlignment = Enum.TextXAlignment.Center,
 			TextYAlignment = Enum.TextYAlignment.Center,
-		}.Parent = getContainer()
+
+			Parent = getContainer(),
+		}
 	end
 
 	return fluid.create("Frame") {

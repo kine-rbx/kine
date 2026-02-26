@@ -115,7 +115,7 @@ return tokens(function() return {
 		TokensGlobal.PADDING["LARGE"],
 		TokensGlobal.PADDING["MEDIUM"]
 	),
-	ICON_SEPARATION = 4,
+	ICON_SEPARATION = TokensGlobal.PADDING["MEDIUM"],
 	TRANSITION = {
 		TIME = TokensGlobal.TIMING["FAST"],
 		TWEEN_INFO = {
