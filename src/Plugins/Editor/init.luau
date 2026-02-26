@@ -102,6 +102,14 @@ return function(uiFolder: Folder): ()
 							Text = "File",
 							Dropdown = {}
 						},
+						{
+							Text = "Edit",
+							Dropdown = {}
+						},
+						{
+							Text = "Options",
+							Dropdown = {}
+						},
 					},
 				}
 
