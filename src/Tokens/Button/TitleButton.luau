@@ -7,6 +7,7 @@ local tokens = require(PluginRoot.Helpers.tokens)
 local TokensGlobal = require(PluginRoot.Tokens.Global)
 local TokensButton = require(PluginRoot.Tokens.Button)
 local TokensTitleBar = require(PluginRoot.Tokens.TitleBar)
+local TokensMenuBar = require(PluginRoot.Tokens.MenuBar)
 
 type ButtonColor = TokensButton.ButtonColor
 type ButtonVariant = TokensButton.ButtonVariant
@@ -21,7 +22,7 @@ return tokens(function() return {
 	FONT = TokensGlobal.FONTS["MICHROMA"],
 	COLOR = {
 		["CLOSE"] = TokensGlobal.PALETTE["BAD"] :: ButtonColor,
-		["MINIMIZE"] = "Secondary" :: ButtonColor,
+		["MINIMIZE"] = TokensMenuBar.COLOR :: ButtonColor,
 	},
 	VARIANT = "Ghost" :: ButtonVariant,
 	SIZE = vector.create(

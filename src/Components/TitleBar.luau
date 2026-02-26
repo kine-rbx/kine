@@ -24,7 +24,7 @@ return function(props: {
 
 		LayoutOrder = 0,
 
-		BackgroundColor3 = Theme.colors.Secondary,
+		BackgroundColor3 = TokensTitleBar.COLOR,
 		BorderSizePixel = 0,
 
 		Size = UDim2.new(1, 0, 0, TokensTitleBar.HEIGHT),

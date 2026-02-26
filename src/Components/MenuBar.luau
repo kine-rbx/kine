@@ -66,7 +66,7 @@ return function(props: {
 
 		LayoutOrder = 1,
 
-		BackgroundColor3 = Theme.colors.Primary,
+		BackgroundColor3 = MenuBarTokens.COLOR,
 		BorderSizePixel = 0,
 
 		Size = UDim2.new(1, 0, 0, MenuBarTokens.HEIGHT),

@@ -31,6 +31,7 @@ return function(props: {
 			Hover = TokensTitleButton.COLOR["CLOSE"],
 		} else {
 			Base = TokensTitleButton.COLOR["MINIMIZE"],
+			Hover = TokensTitleButton.COLOR["MINIMIZE"],
 		},
 		Size = TokensTitleButton.SIZE,
 		Padding = TokensTitleButton.PADDING,
