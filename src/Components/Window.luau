@@ -29,12 +29,15 @@ return function(props: {
 		focused = fluid.source(true),
 		position = props.Position
 	}
-	fluid.effect(function()
-		state.open(props.Open())
-	end)
 
 	local tweenInfo = fluid.source(TokensWindow.TRANSITION.TWEEN_INFO["IN"])
 	local tweenInfoPosition = fluid.source(TokensWindow.TRANSITION.TWEEN_INFO["IN"])
+
+	fluid.effect(function()
+		local open = state.open()
+		tweenInfo(open and TokensWindow.TRANSITION.TWEEN_INFO["IN"] or TokensWindow.TRANSITION.TWEEN_INFO["OUT"])
+		tweenInfoPosition(open and TokensWindow.TRANSITION.TWEEN_INFO["IN"] or TokensWindow.TRANSITION.TWEEN_INFO["OUT_POSITION"])
+	end)
 
 	local tweens = styleTweens {
 		color = {
@@ -73,9 +76,7 @@ return function(props: {
 	}
 
 	fluid.effect(function()
-		local open = state.open()
-		tweenInfo(open and TokensWindow.TRANSITION.TWEEN_INFO["IN"] or TokensWindow.TRANSITION.TWEEN_INFO["OUT"])
-		tweenInfoPosition(open and TokensWindow.TRANSITION.TWEEN_INFO["IN"] or TokensWindow.TRANSITION.TWEEN_INFO["OUT_POSITION"])
+		state.open(props.Open())
 	end)
 
 	return fluid.create("CanvasGroup") {

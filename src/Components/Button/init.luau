@@ -67,6 +67,7 @@ return function(props: {
 	}
 
 	local tweenInfo = fluid.source(TokensButton.TRANSITION.TWEEN_INFO["CLICK"])
+
 	fluid.effect(function()
 		tweenInfo(state.clicked() and TokensButton.TRANSITION.TWEEN_INFO["CLICK"] or TokensButton.TRANSITION.TWEEN_INFO["HOVER"])
 	end)
