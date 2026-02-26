@@ -15,9 +15,9 @@ type UsedAs<T> = fluid.UsedAs<T>
 
 export type ButtonColor = UsedAs<ThemeColor | Color3>
 export type ButtonColors = {
-	["Base"]: ButtonColor,
-	["Hover"]: ButtonColor?,
-	["Click"]: ButtonColor?,
+	read ["Base"]: ButtonColor,
+	read ["Hover"]: ButtonColor?,
+	read ["Click"]: ButtonColor?,
 }
 export type ButtonVariant = UsedAs<
 	| "Solid"

@@ -71,7 +71,7 @@ return tokens(function() return {
 		["VERY_SLOW"] = 0.500,
 	},
 	FADE = {
-		["LOWERED"] = fluid.derive(function() return Theme.mode() == "Light" and 0.35 or 0.15 end),
-		["ELEVATED"] = fluid.derive(function() return Theme.mode() == "Light" and 0.15 or 0.35 end),
+		["LOWERED"] = fluid.derive(function() return Theme.mode() == "Light" and 0.2 or 0.15 end),
+		["ELEVATED"] = fluid.derive(function() return Theme.mode() == "Light" and 0.15 or 0.2 end),
 	},
 } end)
