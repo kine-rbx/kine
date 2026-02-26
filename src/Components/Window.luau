@@ -42,22 +42,18 @@ return function(props: {
 	local tweens = styleTweens {
 		color = {
 			callback = function()
-				if state.focused() then
-					return TokensWindow.COLORS.FOCUSED
-				else
-					return TokensWindow.COLORS.UNFOCUSED
-				end
+				return if state.focused()
+					then TokensWindow.COLORS.FOCUSED
+					else TokensWindow.COLORS.UNFOCUSED
 			end,
 			tweenInfo = TokensWindow.TRANSITION.TWEEN_INFO["FOCUS"]
 		},
 		position = {
 			callback = function()
 				local target = state.position()
-				if state.open() then
-					return UDim2.fromOffset(target.x, target.y)
-				else
-					return UDim2.fromOffset(target.x, target.y + TokensWindow.TRANSITION.OFFSET)
-				end
+				return if state.open()
+					then UDim2.fromOffset(target.x, target.y)
+					else UDim2.fromOffset(target.x, target.y + TokensWindow.TRANSITION.OFFSET)
 			end,
 			tweenInfo = tweenInfoPosition
 		},
