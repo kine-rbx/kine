@@ -41,6 +41,9 @@ return function(props: {
 
 		LayoutOrder = props.LayoutOrder,
 
+		AutomaticSize = Enum.AutomaticSize.None,
+		HorizontalAlignment = Enum.HorizontalAlignment.Center,
+
 		OnClick = props.OnClick,
 	}
 end

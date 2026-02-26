@@ -112,9 +112,10 @@ return tokens(function() return {
 	},
 	ROUNDING = TokensGlobal.ROUNDING["SMALL"],
 	PADDING = vector.create(
-		TokensGlobal.PADDING["MEDIUM"],
+		TokensGlobal.PADDING["LARGE"],
 		TokensGlobal.PADDING["MEDIUM"]
 	),
+	ICON_SEPARATION = 4,
 	TRANSITION = {
 		TIME = TokensGlobal.TIMING["FAST"],
 		TWEEN_INFO = {

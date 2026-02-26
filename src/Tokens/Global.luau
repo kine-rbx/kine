@@ -32,12 +32,6 @@ return tokens(function() return {
 				else Color3.fromHex("#78a9ff")
 		end),
 	},
-	ICONS = {
-		["BAD"] = fluid.derive(function() return ICON_FORMAT:format(Theme.mode(), "Error") end),
-		["WARN"] = fluid.derive(function() return ICON_FORMAT:format(Theme.mode(), "Warning") end),
-		["GOOD"] = fluid.derive(function() return ICON_FORMAT:format(Theme.mode(), "Success") end),
-		["INFO"] = fluid.derive(function() return ICON_FORMAT:format(Theme.mode(), "Information") end),
-	},
 	FONTS = {
 		["DEFAULT"] = Font.fromId(12187365364), -- Inter
 		["MICHROMA"] = Font.fromEnum(Enum.Font.Michroma), -- Michroma
@@ -47,6 +41,17 @@ return tokens(function() return {
 		["MEDIUM"] = 12,
 		["LARGE"] = 16,
 		["TITLE"] = 18,
+	},
+	ICONS = {
+		["BAD"] = fluid.derive(function() return ICON_FORMAT:format(Theme.mode(), "Error") end),
+		["WARN"] = fluid.derive(function() return ICON_FORMAT:format(Theme.mode(), "Warning") end),
+		["GOOD"] = fluid.derive(function() return ICON_FORMAT:format(Theme.mode(), "Success") end),
+		["INFO"] = fluid.derive(function() return ICON_FORMAT:format(Theme.mode(), "Information") end),
+	},
+	ICON_SIZES = {
+		["SMALL"] = 12,
+		["MEDIUM"] = 16,
+		["LARGE"] = 32,
 	},
 	ROUNDING = {
 		["SMALL"] = 3,

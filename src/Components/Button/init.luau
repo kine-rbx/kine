@@ -46,6 +46,7 @@ return function(props: {
 	LayoutOrder: UsedAs<number>?,
 
 	AutomaticSize: UsedAs<Enum.AutomaticSize>?,
+	HorizontalAlignment: UsedAs<Enum.HorizontalAlignment>?,
 
 	OnClick: Signal<>?,
 	OnEnter: Signal<>?,
@@ -66,6 +67,10 @@ return function(props: {
 	}
 
 	local tweenInfo = fluid.source(TokensButton.TRANSITION.TWEEN_INFO["CLICK"])
+	fluid.effect(function()
+		tweenInfo(state.clicked() and TokensButton.TRANSITION.TWEEN_INFO["CLICK"] or TokensButton.TRANSITION.TWEEN_INFO["HOVER"])
+	end)
+
 	local tweens = styleTweens {
 		backgroundColor = {
 			callback = function()
@@ -93,10 +98,6 @@ return function(props: {
 		},
 	}
 
-	fluid.effect(function()
-		tweenInfo(state.clicked() and TokensButton.TRANSITION.TWEEN_INFO["CLICK"] or TokensButton.TRANSITION.TWEEN_INFO["HOVER"])
-	end)
-
 	local size: vector
 	if not props.Size or props.Size == "Medium" then
 		size = TokensButton.SIZE["MEDIUM"]
@@ -108,6 +109,90 @@ return function(props: {
 		size = props.Size
 	end
 
+	local container: Frame
+	local function getContainer(): Frame
+		if container then return container end
+		container = fluid.create("Frame") {
+			Name = "Container",
+
+			Size = UDim2.fromScale(1, 1),
+			AutomaticSize = Enum.AutomaticSize.X,
+
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+
+			Padding(props.Padding or TokensButton.PADDING),
+
+			fluid.create("UIListLayout") {
+				Padding = UDim.new(0, TokensButton.ICON_SEPARATION),
+
+				FillDirection = Enum.FillDirection.Horizontal,
+				SortOrder = Enum.SortOrder.LayoutOrder,
+
+				HorizontalAlignment = props.HorizontalAlignment or Enum.HorizontalAlignment.Left,
+				VerticalAlignment = Enum.VerticalAlignment.Center,
+				ItemLineAlignment = Enum.ItemLineAlignment.Center,
+			},
+		}
+		return container
+	end
+
+	if props.IconLeft then
+		fluid.create("ImageLabel") {
+			Name = "IconLeft",
+
+			LayoutOrder = 0,
+
+			Size = UDim2.fromOffset(TokensGlobal.ICON_SIZES["MEDIUM"], TokensGlobal.ICON_SIZES["MEDIUM"]),
+			SizeConstraint = Enum.SizeConstraint.RelativeYY,
+
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+
+			Image = props.IconLeft,
+			ScaleType = Enum.ScaleType.Fit,
+		}.Parent = getContainer()
+	end
+
+	if props.IconRight then
+		fluid.create("ImageLabel") {
+			Name = "IconRight",
+
+			LayoutOrder = 2,
+
+			Size = UDim2.fromOffset(TokensGlobal.ICON_SIZES["MEDIUM"], TokensGlobal.ICON_SIZES["MEDIUM"]),
+			SizeConstraint = Enum.SizeConstraint.RelativeYY,
+
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+
+			Image = props.IconRight,
+			ScaleType = Enum.ScaleType.Fit,
+		}.Parent = getContainer()
+	end
+
+	if props.Text then
+		fluid.create("TextLabel") {
+			Name = "Text",
+
+			LayoutOrder = 1,
+
+			Size = UDim2.fromScale(0, 1),
+			AutomaticSize = Enum.AutomaticSize.X,
+
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+
+			FontFace = props.Font or TokensGlobal.FONTS["DEFAULT"],
+			Text = props.Text,
+			TextSize = props.TextSize or TokensGlobal.TEXT_SIZES["MEDIUM"],
+			TextColor3 = Theme.colors.Text,
+
+			TextXAlignment = Enum.TextXAlignment.Center,
+			TextYAlignment = Enum.TextYAlignment.Center,
+		}.Parent = getContainer()
+	end
+
 	return fluid.create("Frame") {
 		Name = props.Name or "Button",
 
@@ -115,7 +200,7 @@ return function(props: {
 		LayoutOrder = props.LayoutOrder,
 
 		Size = UDim2.fromOffset(size.x, size.y),
-		AutomaticSize = props.AutomaticSize,
+		AutomaticSize = props.AutomaticSize or Enum.AutomaticSize.X,
 
 		BackgroundColor3 = tweens.backgroundColor,
 		BackgroundTransparency = tweens.backgroundTransparency,
@@ -133,13 +218,11 @@ return function(props: {
 			CornerRadius = UDim.new(0, props.Rounding or TokensButton.ROUNDING)
 		},
 
-		Padding(props.Padding or TokensButton.PADDING),
-
 		Pressable {
 			Disabled = props.Disabled,
 			State = state,
 
-			Size = UDim2.fromOffset(size.x, size.y),
+			Size = UDim2.fromScale(1, 1),
 
 			OnClick = props.OnClick,
 			OnEnter = props.OnEnter,
@@ -148,24 +231,6 @@ return function(props: {
 			OnUp = props.OnUp,
 		},
 
-		if props.Text then
-			fluid.create("TextLabel") {
-				Name = "Text",
-
-				Size = UDim2.fromScale(1, 1),
-				AutomaticSize = props.AutomaticSize,
-
-				BackgroundTransparency = 1,
-				BorderSizePixel = 0,
-
-				FontFace = props.Font or TokensGlobal.FONTS["DEFAULT"],
-				Text = props.Text,
-				TextSize = props.TextSize or TokensGlobal.TEXT_SIZES["MEDIUM"],
-				TextColor3 = Theme.colors.Text,
-
-				TextXAlignment = Enum.TextXAlignment.Center,
-				TextYAlignment = Enum.TextYAlignment.Center,
-			}
-		else nil,
+		container,
 	}
 end

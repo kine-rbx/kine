@@ -57,8 +57,6 @@ return function(props: {
 
 		LayoutOrder = props.LayoutOrder,
 
-		AutomaticSize = Enum.AutomaticSize.X,
-
 		OnDown = OnDown,
 		OnEnter = OnEnter,
 	}

@@ -1,7 +1,6 @@
 --!strict
 
 local PluginRoot = script:FindFirstAncestor("Kine")
-local Theme = require(PluginRoot.Shared.Theme)
 local Signal = require(PluginRoot.Common.Signal)
 
 local fluid = require(PluginRoot.Packages.fluid)
@@ -52,7 +51,7 @@ return function(props: {
 				Dropdown = item.Dropdown,
 
 				Text = item.Text,
-				Icon = item.Icon,
+				IconLeft = item.Icon,
 
 				LayoutOrder = index(),
 			}
