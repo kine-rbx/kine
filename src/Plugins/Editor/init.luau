@@ -107,7 +107,7 @@ return function(uiFolder: Folder): ()
 							Dropdown = {}
 						},
 						{
-							Text = "Options",
+							Text = "Object",
 							Dropdown = {}
 						},
 					},

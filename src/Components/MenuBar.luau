@@ -50,6 +50,8 @@ return function(props: {
 				DropdownDirection = "Bottom",
 				Dropdown = item.Dropdown,
 
+				Size = MenuBarTokens.BUTTON_SIZE,
+
 				Text = item.Text,
 				IconLeft = item.Icon,
 

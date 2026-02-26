@@ -27,6 +27,8 @@ return function(props: {
 	IconLeft: UsedAs<string>?,
 	IconRight: UsedAs<string>?,
 
+	Size: ("Small" | "Medium" | "Large" | vector)?,
+
 	Name: UsedAs<string>?,
 
 	LayoutOrder: UsedAs<number>?,
@@ -51,6 +53,7 @@ return function(props: {
 
 		Variant = TokensMenuButton.VARIANT,
 		Colors = TokensMenuButton.COLORS,
+		Size = props.Size,
 		Padding = TokensMenuButton.PADDING,
 
 		Name = props.Name or fluid.read(props.Text),

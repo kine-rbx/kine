@@ -10,10 +10,14 @@ local TokensButton = require(PluginRoot.Tokens.Button)
 
 return tokens(function() return {
 	COLOR = Theme.colors.Primary,
-	HEIGHT = TokensGlobal.PADDING["SMALL"] * 2 + TokensButton.SIZE["MEDIUM"].y,
+	HEIGHT = TokensGlobal.PADDING["SMALL"] * 2 + TokensButton.SIZE["MEDIUM"].y - 2,
 	PADDING = vector.create(
 		TokensGlobal.PADDING["SMALL"],
 		TokensGlobal.PADDING["SMALL"]
 	),
 	SEPARATION = 0,
+	BUTTON_SIZE = vector.create(
+		TokensButton.SIZE["MEDIUM"].x - 2,
+		TokensButton.SIZE["MEDIUM"].y - 2
+	)
 } end)
