@@ -1,0 +1,7 @@
+syntax = "Luau"
+quote_style = "ForceDouble"
+call_parentheses = "Input"
+collapse_simple_statement = "ConditionalOnly"
+
+[sort_requires]
+enabled = false
