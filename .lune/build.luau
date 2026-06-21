@@ -1,25 +1,25 @@
-local process = require("@lune/process")
-local fs = require("@lune/fs")
-local args = require("./lib/args")
-local installer = require("./lib/installer")
-local constants = require("./lib/constants")
+const process = require("@lune/process")
+const fs = require("@lune/fs")
+const args = require("./lib/args")
+const installer = require("./lib/installer")
+const constants = require("./lib/constants")
 
 type Options = {
 	read skip_plugin: boolean,
 }
 
-local RELEASE_DIR = constants.RELEASE_DIR
-local RELEASE_PATH = constants.RELEASE_PATH
+const RELEASE_DIR = constants.RELEASE_DIR
+const RELEASE_PATH = constants.RELEASE_PATH
 
-local function build()
+const function build()
 	if not fs.isDir(RELEASE_DIR) then fs.writeDir(RELEASE_DIR) end
 
-	local result = process.exec("rojo", { "build", "-o", RELEASE_PATH })
+	const result = process.exec("rojo", { "build", "-o", RELEASE_PATH })
 	assert(result.ok, result.stderr)
 end
 
-local function init(options: Options)
-	local clock = os.clock()
+const function init(options: Options)
+	const clock = os.clock()
 
 	build()
 	if not options.skip_plugin then installer.install() end

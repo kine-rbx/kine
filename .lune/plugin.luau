@@ -1,11 +1,11 @@
-local args = require("./lib/args")
-local installer = require("./lib/installer")
+const args = require("./lib/args")
+const installer = require("./lib/installer")
 
 type Options = {
 	read option: "install" | "uninstall",
 }
 
-local function init(options: Options)
+const function init(options: Options)
 	if options.option == "install" then
 		installer.install()
 	elseif options.option == "uninstall" then

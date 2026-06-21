@@ -8,8 +8,8 @@ type function children_names(t: type): type
 	local union: type? = nil
 
 	for key, property in t:properties() do
-		local name = key:value()
-		local read = property.read
+		const name = key:value()
+		const read = property.read
 		if name ~= "Parent" and read and read:is("extern") then
 			union = union and types.unionof(union, types.singleton(name)) or types.singleton(name)
 		end

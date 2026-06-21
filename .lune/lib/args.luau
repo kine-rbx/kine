@@ -1,4 +1,4 @@
-local process = require("@lune/process")
+const process = require("@lune/process")
 
 type Argument<Kind, Alias = string> = {
 	read kind: Kind,
@@ -14,13 +14,13 @@ type Entry = Positional<any> | Option | Flag
 type function map_returns(map: type): type
 	assert(map:is("table"))
 
-	local result = types.newtable()
+	const result = types.newtable()
 
 	for key, property in map:properties() do
-		local entry = property.read
+		const entry = property.read
 		assert(entry and entry:is("table"))
 
-		local kind = assert(entry:readproperty(types.singleton("kind"))):value()
+		const kind = assert(entry:readproperty(types.singleton("kind"))):value()
 		local value: type
 
 		if kind == "flag" then
@@ -28,13 +28,13 @@ type function map_returns(map: type): type
 		elseif kind == "option" then
 			value = types.string
 		elseif kind == "positional" then
-			local aliases = entry:readproperty(types.singleton("aliases"))
+			const aliases = entry:readproperty(types.singleton("aliases"))
 			assert(aliases and aliases:is("table"))
 			value = assert(aliases:readindexer()).result
 		end
 
 		assert(value)
-		local required = entry:readproperty(types.singleton("required"))
+		const required = entry:readproperty(types.singleton("required"))
 		assert(required and required:is("boolean"))
 
 		value = required and value or types.unionof(value, types.singleton(nil))
@@ -45,7 +45,7 @@ type function map_returns(map: type): type
 	return result
 end
 
-local args = {}
+const args = {}
 
 function args.required_positional<Alias>(...: Alias): Positional<Alias>
 	return { kind = "positional", required = true, aliases = { ... } }
@@ -66,15 +66,15 @@ function args.flag(...: string): Flag
 end
 
 function args.assert<T>(on_error: string, map: T & { [any]: Entry }): map_returns<T>
-	local result = {} :: { [string]: string | boolean }
-	local alias_map: { [index<Entry, "kind">]: { [string]: string } } = {
+	const result = {} :: { [string]: string | boolean }
+	const alias_map: { [index<Entry, "kind">]: { [string]: string } } = {
 		positional = {},
 		option = {},
 		flag = {},
 	}
 
 	for key, entry in map :: { [string]: Entry } do
-		local target = alias_map[entry.kind]
+		const target = alias_map[entry.kind]
 		for _, alias in entry.aliases do
 			target[alias] = key
 		end
@@ -82,12 +82,12 @@ function args.assert<T>(on_error: string, map: T & { [any]: Entry }): map_return
 
 	local index = 1
 	while index <= #process.args do
-		local alias = process.args[index]
+		const alias = process.args[index]
 
 		if alias_map.option[alias] then
-			local key = alias_map.option[alias]
+			const key = alias_map.option[alias]
 			index += 1
-			local value = process.args[index]
+			const value = process.args[index]
 			assert(value and alias_map.flag[value] == nil and alias_map.option[value] == nil, on_error)
 			result[key] = value
 		elseif alias_map.flag[alias] then

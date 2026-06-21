@@ -1,13 +1,13 @@
 --!strict
 
-local plugin_root = script:FindFirstAncestor("kine")
-local fluid = plugin_root.packages[".pesde"]["ffrostfall_fluid@0.6.4"].fluid
+const plugin_root = script:FindFirstAncestor("kine")
+const fluid = plugin_root.packages[".pesde"]["ffrostfall_fluid@0.6.4"].fluid
 
-local easings = require(plugin_root.fluid.tween.easings)
-local graph = require(fluid.reactive.graph)
-local oklab = require(fluid.utils.oklab)
-local read = require(fluid.utils.read)
-local types = require(fluid.reactive.types)
+const easings = require(plugin_root.fluid.tween.easings)
+const graph = require(fluid.reactive.graph)
+const oklab = require(fluid.utils.oklab)
+const read = require(fluid.utils.read)
+const types = require(fluid.reactive.types)
 
 type AnimatableDataTypeEnum = "color" | "vector" | "udim" | "udim2" | "number"
 type AnimatableDataType = Color3 | vector | UDim | UDim2 | number
@@ -36,12 +36,12 @@ type TweenControls<T> = {
 	tween_info: TweenInfo?,
 }
 
-local active_tweens: { [TweenState]: graph.SourceNode<AnimatableDataType> } = {}
+const active_tweens: { [TweenState]: graph.SourceNode<AnimatableDataType> } = {}
 
-local function pack_type(value: AnimatableDataType): (AnimatableDataTypeEnum, { number })
+const function pack_type(value: AnimatableDataType): (AnimatableDataTypeEnum, { number })
 	if typeof(value) == "Color3" then
 		-- oklab conversion
-		local intermediate_vector = oklab.from_srgb(vector.create(value.R, value.G, value.B))
+		const intermediate_vector = oklab.from_srgb(vector.create(value.R, value.G, value.B))
 
 		return "color", {
 			intermediate_vector.x,
@@ -61,10 +61,10 @@ local function pack_type(value: AnimatableDataType): (AnimatableDataTypeEnum, { 
 	error(`tried tweening {typeof(value)}`)
 end
 
-local function unpack_type(type_string: AnimatableDataTypeEnum, array: { number }): AnimatableDataType
+const function unpack_type(type_string: AnimatableDataTypeEnum, array: { number }): AnimatableDataType
 	if type_string == "color" then
 		-- oklab conversion
-		local intermediate_vector =
+		const intermediate_vector =
 			vector.clamp(oklab.to_srgb(vector.create(array[1], array[2], array[3])), vector.zero, vector.one)
 
 		return Color3.new(intermediate_vector.x, intermediate_vector.y, intermediate_vector.z)
@@ -81,11 +81,11 @@ local function unpack_type(type_string: AnimatableDataTypeEnum, array: { number 
 	return error("unreachable")
 end
 
-local function step_tween<T>(state: TweenState, delta_time: number)
+const function step_tween<T>(state: TweenState, delta_time: number)
 	state.elapsed = math.min(state.elapsed + delta_time, state.tween_time)
 
-	local easing_function = easings[state.tween_style][state.tween_direction]
-	local alpha = state.tween_time == 0 and 1 or easing_function(state.elapsed / state.tween_time)
+	const easing_function = easings[state.tween_style][state.tween_direction]
+	const alpha = state.tween_time == 0 and 1 or easing_function(state.elapsed / state.tween_time)
 
 	for i = 1, state.elements do
 		state.position[i] = state.start[i] + (state.target[i] - state.start[i]) * alpha
@@ -96,7 +96,7 @@ local function step_tween<T>(state: TweenState, delta_time: number)
 	state.unpacked_value = unpack_type(state.datatype, state.position)
 end
 
-local tween = {}
+const tween = {}
 
 function tween.create<T>(
 	input: types.UsedAs<T>,
@@ -104,14 +104,14 @@ function tween.create<T>(
 ): (() -> read.CastIntoValue<T>, (TweenControls<T>) -> ())
 	graph.set_group(graph.new_group("tween"))
 
-	local output = graph.create_source_node(read(input))
+	const output = graph.create_source_node(read(input))
 
-	local call = graph.evaluate_node(output :: any)
+	const call = graph.evaluate_node(output :: any)
 	assert(call.success)
 
-	local starting_value_string, starting_value = pack_type(call.value)
+	const starting_value_string, starting_value = pack_type(call.value)
 
-	local tween_state: TweenState = {
+	const tween_state: TweenState = {
 		position = starting_value,
 		target = starting_value,
 		start = starting_value,
@@ -127,9 +127,9 @@ function tween.create<T>(
 		unpacked_value = call.value,
 	}
 
-	local function on_update()
-		local input_as_value = read(input)
-		local datatype, array = pack_type(input_as_value)
+	const function on_update()
+		const input_as_value = read(input)
+		const datatype, array = pack_type(input_as_value)
 		assert(datatype == tween_state.datatype, "Can't switch the data types of a tween")
 
 		tween_state.target = array
@@ -141,7 +141,7 @@ function tween.create<T>(
 		return nil
 	end
 
-	local input_node = graph.create_reactive_node(graph.assert_stable_parent(), on_update, "deferred", read(input))
+	const input_node = graph.create_reactive_node(graph.assert_stable_parent(), on_update, "deferred", read(input))
 
 	graph.evaluate_node(input_node)
 	graph.clear_group()
@@ -155,7 +155,7 @@ function tween.create<T>(
 		local reset = false
 
 		if controls.position then
-			local datatype, array = pack_type(controls.position)
+			const datatype, array = pack_type(controls.position)
 			assert(datatype == tween_state.datatype, "Can't switch the data types of a tween")
 			tween_state.position = array
 			tween_state.start = array
@@ -163,7 +163,7 @@ function tween.create<T>(
 		end
 
 		if controls.target then
-			local datatype, array = pack_type(controls.target)
+			const datatype, array = pack_type(controls.target)
 			assert(datatype == tween_state.datatype, "Can't switch the data types of a tween")
 			tween_state.target = array
 			tween_state.start = table.clone(tween_state.position)

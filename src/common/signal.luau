@@ -26,28 +26,28 @@ export type Connection<T...> = {
 
 local free_thread: thread? = nil
 
-local function run<T...>(callback: (T...) -> (), ...: T...): ()
-	local thread = free_thread
+const function run<T...>(callback: (T...) -> (), ...: T...): ()
+	const thread = free_thread
 	free_thread = nil
 	callback(...)
 	free_thread = thread
 end
 
-local function runner<T...>(): ()
+const function runner<T...>(): ()
 	while true do
 		(run :: (T...) -> ())(coroutine.yield())
 	end
 end
 
-local signal = {}
+const signal = {}
 
-local function disconnect<T...>(self: Connection<T...>): ()
+const function disconnect<T...>(self: Connection<T...>): ()
 	if not self.active then return end
 	self.active = false
 
-	local signal = self._signal
-	local parent = self._parent
-	local child = self._child
+	const signal = self._signal
+	const parent = self._parent
+	const child = self._child
 
 	if parent then
 		parent._child = child
@@ -65,8 +65,8 @@ local function disconnect<T...>(self: Connection<T...>): ()
 	self._child = false
 end
 
-local function connect<T...>(self: Signal<T...>, callback: (T...) -> ()): Connection<T...>
-	local connection: Connection<T...> = {
+const function connect<T...>(self: Signal<T...>, callback: (T...) -> ()): Connection<T...>
+	const connection: Connection<T...> = {
 		active = true,
 
 		_signal = self,
@@ -78,7 +78,7 @@ local function connect<T...>(self: Signal<T...>, callback: (T...) -> ()): Connec
 		disconnect = disconnect,
 	}
 
-	local tail = self._tail
+	const tail = self._tail
 	if tail then
 		connection._parent = tail
 		tail._child = connection
@@ -90,7 +90,7 @@ local function connect<T...>(self: Signal<T...>, callback: (T...) -> ()): Connec
 	return connection
 end
 
-local function once<T...>(self: Signal<T...>, callback: (T...) -> ()): Connection<T...>
+const function once<T...>(self: Signal<T...>, callback: (T...) -> ()): Connection<T...>
 	local connection: Connection<T...>
 	connection = self:connect(function(...)
 		connection:disconnect()
@@ -100,8 +100,8 @@ local function once<T...>(self: Signal<T...>, callback: (T...) -> ()): Connectio
 	return connection
 end
 
-local function fire<T...>(self: Signal<T...>, ...: T...): ()
-	local tail = self._tail
+const function fire<T...>(self: Signal<T...>, ...: T...): ()
+	const tail = self._tail
 	local connection = self._head
 
 	while connection do
@@ -115,7 +115,7 @@ local function fire<T...>(self: Signal<T...>, ...: T...): ()
 	end
 end
 
-local function reset<T...>(self: Signal<T...>): ()
+const function reset<T...>(self: Signal<T...>): ()
 	local connection = self._tail
 
 	self._head = false

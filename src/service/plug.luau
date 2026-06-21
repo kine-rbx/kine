@@ -1,7 +1,7 @@
 --!strict
 
-local plugin_root = script:FindFirstAncestor("kine")
-local types = require(plugin_root.types)
+const plugin_root = script:FindFirstAncestor("kine")
+const types = require(plugin_root.types)
 
 export type ToolButton = {
 	instance: PluginToolbarButton,
@@ -16,19 +16,19 @@ export type ToolConfig = {
 	on_click: () -> (),
 }
 
-local TOOLBAR_NAME = "Kine"
-local SETTING_FORMAT = "KINE--%s"
+const TOOLBAR_NAME = "Kine"
+const SETTING_FORMAT = "KINE--%s"
 
-local function reset_button(button: PluginToolbarButton): ()
+const function reset_button(button: PluginToolbarButton): ()
 	button.Enabled = false
 	button.Enabled = true
 end
 
-local function reset(self: ToolButton): ()
+const function reset(self: ToolButton): ()
 	task.defer(reset_button, self.instance)
 end
 
-local plug = {}
+const plug = {}
 local initialized = false
 
 local plugin: Plugin
@@ -42,10 +42,10 @@ function plug.set_setting(key: string): any
 end
 
 function plug.add_tool_button(key: types.ToolKey | string, config: ToolConfig): ToolButton
-	local button = plug.toolbar:CreateButton(config.name, config.tooltip, config.icon)
+	const button = plug.toolbar:CreateButton(config.name, config.tooltip, config.icon)
 	button.Click:Connect(config.on_click)
 
-	local tool_button: ToolButton = {
+	const tool_button: ToolButton = {
 		instance = button,
 		reset = reset,
 	}

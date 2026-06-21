@@ -1,6 +1,6 @@
 --!strict
 
-local CONFIG = table.freeze {
+const CONFIG = table.freeze {
 	UI_FOLDER_NAME = "KineUI",
 }
 

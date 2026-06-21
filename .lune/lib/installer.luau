@@ -1,15 +1,15 @@
-local fs = require("@lune/fs")
-local constants = require("./constants")
+const fs = require("@lune/fs")
+const constants = require("./constants")
 
-local RELEASE_PATH = constants.RELEASE_PATH
-local INSTALL_PATH = constants.INSTALL_PATH
+const RELEASE_PATH = constants.RELEASE_PATH
+const INSTALL_PATH = constants.INSTALL_PATH
 
-local installer = {}
+const installer = {}
 
 function installer.install()
 	assert(fs.isFile(RELEASE_PATH), `release file not found at {RELEASE_PATH}`)
 
-	local data = fs.readFile(RELEASE_PATH)
+	const data = fs.readFile(RELEASE_PATH)
 	fs.writeFile(INSTALL_PATH, data)
 
 	print(`successfully installed plugin to {INSTALL_PATH}`)

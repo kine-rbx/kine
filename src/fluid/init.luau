@@ -1,20 +1,19 @@
 --!strict
 
-local plugin_root = script:FindFirstAncestor("kine")
-local scheduler = require(plugin_root.service.scheduler)
+const plugin_root = script:FindFirstAncestor("kine")
+const scheduler = require(plugin_root.service.scheduler)
 
-local fluid = require(plugin_root.packages.fluid)
-local tween = require(plugin_root.fluid.tween)
+const fluid = require(plugin_root.packages.fluid)
+const tween = require(plugin_root.fluid.tween)
 
 export type UsedAs<T> = fluid.UsedAs<T>
 export type Source<T> = fluid.Source<T>
 export type Action = fluid.Action
 export type PropertiesFor<T> = fluid.PropertiesFor<T>
 
-fluid = fluid :: typeof(fluid) & { tween: typeof(tween) }
-fluid.tween = tween
+(fluid :: typeof(fluid) & { tween: typeof(tween) }).tween = tween
 
-local step = fluid.provide_scheduler()
+const step = fluid.provide_scheduler()
 scheduler.connect("react", function(delta_time)
 	step(delta_time)
 	tween.step(delta_time)

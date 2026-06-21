@@ -1,19 +1,19 @@
 --!strict
 
-local RunService = game:GetService("RunService")
+const RunService = game:GetService("RunService")
 
 type valueof<T> = index<T, keyof<T>>
 
-local function literal<T>(t: T | ""): T
+const function literal<T>(t: T | ""): T
 	return t
 end
 
-local function enforce_table<T, K, V>(t: T & { [K]: V }, k: K): index<T, K>
+const function enforce_table<T, K, V>(t: T & { [K]: V }, k: K): index<T, K>
 	if not t[k] then t[k] = {} end
 	return t[k]
 end
 
-local PHASES = {
+const PHASES = {
 	literal "input",
 	literal "react",
 }
@@ -21,9 +21,9 @@ local PHASES = {
 export type Phase = valueof<typeof(PHASES)>
 export type Callback = (delta_time: number) -> ()
 
-local callbacks: { [Phase]: { Callback } } = {}
+const callbacks: { [Phase]: { Callback } } = {}
 
-local function init(): ()
+const function init(): ()
 	RunService.PreSimulation:Connect(function(delta_time)
 		for _, phase in PHASES do
 			for _, callback in enforce_table(callbacks, phase) do
@@ -33,10 +33,10 @@ local function init(): ()
 	end)
 end
 
-local scheduler = {}
+const scheduler = {}
 
 function scheduler.connect(phase: Phase, callback: Callback): () -> ()
-	local target = enforce_table(callbacks, phase)
+	const target = enforce_table(callbacks, phase)
 	table.insert(target, callback)
 
 	return function()
