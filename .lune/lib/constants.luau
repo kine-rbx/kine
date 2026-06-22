@@ -1,8 +1,8 @@
-const roblox = require("@lune/roblox")
+local roblox = require("@lune/roblox")
 
-const STUDIO_PLUGIN_PATH = roblox.studioPluginPath():gsub("\\", "/")
-const RELEASE_DIR = "release"
-const RELEASE_NAME = "Kine.rbxm"
+local STUDIO_PLUGIN_PATH = roblox.studioPluginPath():gsub("\\", "/")
+local RELEASE_DIR = "release"
+local RELEASE_NAME = "Kine.rbxm"
 
 return {
 	RELEASE_DIR = RELEASE_DIR,
