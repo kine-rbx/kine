@@ -1,6 +1,6 @@
 local process = require("@lune/process")
 local fs = require("@lune/fs")
-local args = require("./lib/args")
+local arguments = require("./lib/arguments")
 local installer = require("./lib/installer")
 local constants = require("./lib/constants")
 
@@ -27,6 +27,6 @@ local function init(options: Options)
 	print(string.format("build completed in %.2fs", os.clock() - clock))
 end
 
-init(args.assert("usage: lune run build [-s|--skip-plugin]", {
-	skip_plugin = args.flag("-s", "--skip-plugin"),
+init(arguments.assert("usage: lune run build [-s|--skip-plugin]", {
+	skip_plugin = arguments.flag("-s", "--skip-plugin"),
 }))

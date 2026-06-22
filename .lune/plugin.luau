@@ -1,4 +1,4 @@
-local args = require("./lib/args")
+local arguments = require("./lib/arguments")
 local installer = require("./lib/installer")
 
 type Options = {
@@ -13,6 +13,6 @@ local function init(options: Options)
 	end
 end
 
-init(args.assert("usage: lune run plugin <install|uninstall>", {
-	option = args.required_positional("install" :: "install", "uninstall" :: "uninstall"),
+init(arguments.assert("usage: lune run plugin <install|uninstall>", {
+	option = arguments.required_positional("install" :: "install", "uninstall" :: "uninstall"),
 }))

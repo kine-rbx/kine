@@ -11,6 +11,8 @@ type Option = Argument<"option">
 type Flag = Argument<"flag">
 type Entry = Positional<any> | Option | Flag
 
+local args = process.args
+
 type function map_returns(map: type): type
 	assert(map:is("table"))
 
@@ -45,27 +47,27 @@ type function map_returns(map: type): type
 	return result
 end
 
-local args = {}
+local arguments = {}
 
-function args.required_positional<Alias>(...: Alias): Positional<Alias>
+function arguments.required_positional<Alias>(...: Alias): Positional<Alias>
 	return { kind = "positional", required = true, aliases = { ... } }
 end
-function args.optional_positional<Alias>(...: Alias): Positional<Alias>
+function arguments.optional_positional<Alias>(...: Alias): Positional<Alias>
 	return { kind = "positional", required = false, aliases = { ... } }
 end
 
-function args.required_option(...: string): Option
+function arguments.required_option(...: string): Option
 	return { kind = "option", required = true, aliases = { ... } }
 end
-function args.optional_option(...: string): Option
+function arguments.optional_option(...: string): Option
 	return { kind = "option", required = false, aliases = { ... } }
 end
 
-function args.flag(...: string): Flag
+function arguments.flag(...: string): Flag
 	return { kind = "flag", required = true, aliases = { ... } }
 end
 
-function args.assert<T>(on_error: string, map: T & { [any]: Entry }): map_returns<T>
+function arguments.assert<T>(on_error: string, map: T & { [any]: Entry }): map_returns<T>
 	local result = {} :: { [string]: string | boolean }
 	local alias_map: { [index<Entry, "kind">]: { [string]: string } } = {
 		positional = {},
@@ -81,13 +83,13 @@ function args.assert<T>(on_error: string, map: T & { [any]: Entry }): map_return
 	end
 
 	local index = 1
-	while index <= #process.args do
-		local alias = process.args[index]
+	while index <= #args do
+		local alias = args[index]
 
 		if alias_map.option[alias] then
 			local key = alias_map.option[alias]
 			index += 1
-			local value = process.args[index]
+			local value = args[index]
 			assert(value and alias_map.flag[value] == nil and alias_map.option[value] == nil, on_error)
 			result[key] = value
 		elseif alias_map.flag[alias] then
@@ -110,4 +112,4 @@ function args.assert<T>(on_error: string, map: T & { [any]: Entry }): map_return
 	return result :: any
 end
 
-return args
+return arguments
