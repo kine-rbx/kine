@@ -1,6 +1,6 @@
 --!strict
 
-local plugin_root = script:FindFirstAncestor("kine")
+const plugin_root = script:FindFirstAncestor("kine")
 
 type function children_names(t: type): type
 	assert(t:is("extern"))
