@@ -1,7 +1,7 @@
 --!strict
 
 const plugin_root = script:FindFirstAncestor("kine")
-const plug = require(plugin_root.service.plug)
+const plug = require(plugin_root.services.plug)
 
 return function(): ()
 	local tool_button: plug.ToolButton

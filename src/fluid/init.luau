@@ -1,7 +1,7 @@
 --!strict
 
 const plugin_root = script:FindFirstAncestor("kine")
-const scheduler = require(plugin_root.service.scheduler)
+const scheduler = require(plugin_root.services.scheduler)
 
 const fluid = require(plugin_root.packages.fluid)
 const tween = require(plugin_root.fluid.tween)
