@@ -14,7 +14,7 @@ export type PropertiesFor<T> = fluid.PropertiesFor<T>
 (fluid :: typeof(fluid) & { tween: typeof(tween) }).tween = tween
 
 const step = fluid.provide_scheduler()
-scheduler.connect("react", function(delta_time)
+scheduler.on("REACT", function(delta_time)
 	step(delta_time)
 	tween.step(delta_time)
 end)

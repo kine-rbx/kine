@@ -2,46 +2,49 @@
 
 const RunService = game:GetService("RunService")
 
+const plugin_root = script:FindFirstAncestor("kine")
+const signal = require(plugin_root.common.signal)
+
 type valueof<T> = index<T, keyof<T>>
+
+export type Signal = signal.Signal<number>
+export type Connection = signal.Connection<number>
 
 const function literal<T>(t: T | ""): T
 	return t
 end
 
-const function enforce_table<T, K, V>(t: T & { [K]: V }, k: K): index<T, K>
-	if not t[k] then t[k] = {} end
-	return t[k]
-end
-
 const PHASES = {
-	literal "input",
-	literal "react",
+	literal "INPUT",
+	literal "REACT",
 }
 
 export type Phase = valueof<typeof(PHASES)>
-export type Callback = (delta_time: number) -> ()
 
-const callbacks: { [Phase]: { Callback } } = {}
+const signals: { [Phase]: Signal } = {}
+
+const function run_phase(phase: Phase, delta_time: number): ()
+	signals[phase]:fire(delta_time)
+end
 
 const function init(): ()
-	RunService.PreSimulation:Connect(function(delta_time)
-		for _, phase in PHASES do
-			for _, callback in enforce_table(callbacks, phase) do
-				callback(delta_time)
-			end
-		end
+	for _, phase in PHASES do
+		signals[phase] = signal.new()
+	end
+
+	RunService.Heartbeat:Connect(function(delta_time: number)
+		run_phase("INPUT", delta_time)
+	end)
+
+	RunService.PreRender:Connect(function(delta_time: number)
+		run_phase("REACT", delta_time)
 	end)
 end
 
 const scheduler = {}
 
-function scheduler.connect(phase: Phase, callback: Callback): () -> ()
-	const target = enforce_table(callbacks, phase)
-	table.insert(target, callback)
-
-	return function()
-		table.remove(target, table.find(target, callback))
-	end
+function scheduler.on(phase: Phase, callback: (delta_time: number) -> ()): Connection
+	return assert(signals[phase], "attempt to connect to unknown scheduler phase"):connect(callback)
 end
 
 init()
