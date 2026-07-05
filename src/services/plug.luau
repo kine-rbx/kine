@@ -2,18 +2,19 @@
 
 const plugin_root = script:FindFirstAncestor("kine")
 const types = require(plugin_root.types)
+const signal = require(plugin_root.common.signal)
 
 export type ToolButton = {
-	instance: PluginToolbarButton,
-	reset: (ToolButton) -> (),
+	read instance: PluginToolbarButton,
+	read on_click: signal.Signal<>,
+
+	read reset: (ToolButton) -> (),
 }
 
 export type ToolConfig = {
-	name: string,
-	tooltip: string,
-	icon: string,
-
-	on_click: () -> (),
+	read name: string,
+	read tooltip: string,
+	read icon: string,
 }
 
 const TOOLBAR_NAME = "Kine"
@@ -28,10 +29,10 @@ const function reset(self: ToolButton): ()
 	task.defer(reset_button, self.instance)
 end
 
+local plugin: Plugin
+
 const plug = {}
 local initialized = false
-
-local plugin: Plugin
 
 function plug.get_setting(key: string, value: any): ()
 	plugin:SetSetting(SETTING_FORMAT:format(key), value)
@@ -41,12 +42,18 @@ function plug.set_setting(key: string): any
 	return plugin:GetSetting(SETTING_FORMAT:format(key))
 end
 
-function plug.add_tool_button(key: types.ToolKey | string, config: ToolConfig): ToolButton
+function plug.add_tool_button(key: types.ToolKeyLoose, config: ToolConfig): ToolButton
 	const button = plug.toolbar:CreateButton(config.name, config.tooltip, config.icon)
-	button.Click:Connect(config.on_click)
+	const on_click: signal.Signal<> = signal.new()
+
+	button.Click:Connect(function()
+		on_click:fire()
+	end)
 
 	const tool_button: ToolButton = {
 		instance = button,
+		on_click = on_click,
+
 		reset = reset,
 	}
 
@@ -60,7 +67,7 @@ function plug._init(_plugin: Plugin): ()
 
 	plugin = _plugin
 	plug.toolbar = plugin:CreateToolbar(TOOLBAR_NAME)
-	plug.tool_buttons = {} :: { [types.ToolKey | string]: ToolButton }
+	plug.tool_buttons = {} :: { [types.ToolKeyLoose]: ToolButton }
 end
 
 return plug
