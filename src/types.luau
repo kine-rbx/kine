@@ -19,5 +19,6 @@ type function children_names(t: type): type
 end
 
 export type ToolKey = children_names<typeof(plugin_root.tools)>
+export type ToolKeyLoose = ToolKey | string
 
 return nil
