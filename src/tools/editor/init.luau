@@ -1,54 +1,40 @@
 --!strict
 
 const plugin_root = script:FindFirstAncestor("kine")
+const types = require(plugin_root.types)
 const global = require(plugin_root.global)
 const fluid = require(plugin_root.fluid)
 const plug = require(plugin_root.services.plug)
+const windows = require(plugin_root.services.windows)
 const window_context = require(plugin_root.contexts.window_context)
 
+const TOOL_NAME: types.ToolKey = "Editor"
+
 return function(): ()
-	local tool_button: plug.ToolButton
-	local active_gui: ScreenGui
-
-	local window: window_context.WindowContext? = nil
-	local window_cleanup: (() -> ())? = nil
-
-	-- TODO: window context should manage this dumbass
-
-	const function die(): ()
-		if window_cleanup then window_cleanup() end
-		window_cleanup = nil
-	end
-
-	const function setup(): ()
-		window = window_context.new("Editor")
-	end
-
-	const function on_click(): ()
-		if window_cleanup and window then
-			if window.minimized() then
-				window:request_minimize(false)
-			else
-				window:request_close()
-			end
-		else
-			die()
-			window_cleanup = fluid.root(setup)
-		end
-	end
-
-	active_gui = fluid.create("ScreenGui") {
-		Name = "Editor",
-		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-
-		Parent = global.ui_folder,
-	}
-
-	tool_button = plug.add_tool_button("editor", {
-		name = "Editor",
+	const tool_button = plug.add_tool_button("editor", {
+		name = TOOL_NAME,
 		tooltip = "Create and edit animations",
 		icon = "",
-
-		on_click = on_click,
 	})
+
+	const window = windows.setup(TOOL_NAME)
+
+	const function setup(window_context: window_context.WindowContext): ()
+		-- this is so much better oh my god
+		print("window has been set up!!!")
+	end
+
+	tool_button.on_click:connect(function()
+		const context = window.context
+		if context then
+			if context.minimized() then
+				context:request_minimize(false)
+			else
+				context:request_close()
+			end
+		else
+			window:deregister()
+			window:register(setup)
+		end
+	end)
 end

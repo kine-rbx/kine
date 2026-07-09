@@ -9,7 +9,7 @@ const Window = require(plugin_root.ui.components.Window)
 const WindowContainer = require(plugin_root.ui.components.WindowContainer)
 
 export type WindowContext = {
-	read tool: types.ToolKey,
+	read tool: types.ToolKeyLoose,
 
 	read title: fluid.Source<string>,
 
@@ -31,22 +31,23 @@ export type WindowContext = {
 	_container_cleanup: (() -> ())?,
 }
 
-const function create_container(self: WindowContext): ()
+const function create_container(self: WindowContext): CanvasGroup | Frame
 	assert(self.instance)
 	const container = WindowContainer(true)
 	self.instance.Parent = container
+	return container
 end
 
 const window_context = {}
 
 const function destroy(self: WindowContext): ()
-	const instance = self.instance
 	const container_cleanup = self._container_cleanup
-	self.instance = nil
 	self._container_cleanup = nil
+	const instance = self.instance
+	self.instance = nil
 
-	if instance then instance:Destroy() end
 	if container_cleanup then container_cleanup() end
+	if instance then instance:Destroy() end
 end
 
 const function request_close(self: WindowContext): ()
@@ -59,11 +60,11 @@ const function request_minimize(self: WindowContext, minimized: boolean): ()
 	self.minimized(minimized)
 end
 
-function window_context.new(tool: types.ToolKey, title: string?): WindowContext
+function window_context.new(tool: types.ToolKeyLoose): WindowContext
 	const self: WindowContext = {
 		tool = tool,
 
-		title = fluid.source(title or `Kine {title}`),
+		title = fluid.source(""),
 
 		open = fluid.source(false),
 		minimized = fluid.source(false),
@@ -82,7 +83,11 @@ function window_context.new(tool: types.ToolKey, title: string?): WindowContext
 	}
 
 	self._container_cleanup = fluid.root(function()
-		create_container(self)
+		const container = create_container(self)
+
+		fluid.cleanup(function()
+			container:Destroy()
+		end)
 	end)
 
 	return self
