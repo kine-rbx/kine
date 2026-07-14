@@ -6,10 +6,10 @@ export type Signal<T...> = {
 	_head: Connection<T...> | false,
 	_tail: Connection<T...> | false,
 
-	read connect: (self: Signal<T...>, callback: (T...) -> ()) -> Connection<T...>,
-	read once: (self: Signal<T...>, callback: (T...) -> ()) -> Connection<T...>,
-	read fire: (self: Signal<T...>, T...) -> (),
-	read reset: (self: Signal<T...>) -> (),
+	read connect: (Signal<T...>, callback: (T...) -> ()) -> Connection<T...>,
+	read once: (Signal<T...>, callback: (T...) -> ()) -> Connection<T...>,
+	read fire: (Signal<T...>, T...) -> (),
+	read reset: (Signal<T...>) -> (),
 }
 
 export type Connection<T...> = {
@@ -21,7 +21,7 @@ export type Connection<T...> = {
 	_parent: Connection<T...> | false,
 	_child: Connection<T...> | false,
 
-	read disconnect: (self: Connection<T...>) -> (),
+	read disconnect: (Connection<T...>) -> (),
 }
 
 local free_thread: thread? = nil
