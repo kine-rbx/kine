@@ -31,7 +31,7 @@ const function init(): ()
 end
 
 const function load(): ()
-	require(plugin_root.services.plug)._init(plugin)
+	require(plugin_root.services.plug).provide_plugin(plugin)
 	init()
 
 	for _, module in plugin_root.tools:GetChildren() do

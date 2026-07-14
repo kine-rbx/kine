@@ -32,7 +32,6 @@ end
 local plugin: Plugin
 
 const plug = {}
-local initialized = false
 
 function plug.get_setting(key: string, value: any): ()
 	plugin:SetSetting(SETTING_FORMAT:format(key), value)
@@ -61,12 +60,11 @@ function plug.add_tool_button(key: types.ToolKeyLoose, config: ToolConfig): Tool
 	return tool_button
 end
 
-function plug._init(_plugin: Plugin): ()
-	assert(not initialized, "plug initialized twice")
-	initialized = true
+function plug.provide_plugin(plugin_object: Plugin): ()
+	assert(plugin == nil, "plug initialized twice")
+	plugin = plugin_object
 
-	plugin = _plugin
-	plug.toolbar = plugin:CreateToolbar(TOOLBAR_NAME)
+	plug.toolbar = (plugin :: Plugin):CreateToolbar(TOOLBAR_NAME)
 	plug.tool_buttons = {} :: { [types.ToolKeyLoose]: ToolButton }
 end
 
