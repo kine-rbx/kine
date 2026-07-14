@@ -27,7 +27,13 @@ const function run_phase(phase: Phase, delta_time: number): ()
 	signals[phase]:fire(delta_time)
 end
 
-const function init(): ()
+const scheduler = {}
+
+function scheduler.on(phase: Phase, callback: (delta_time: number) -> ()): Connection
+	return assert(signals[phase], "attempt to connect to unknown scheduler phase"):connect(callback)
+end
+
+do
 	for _, phase in PHASES do
 		signals[phase] = signal.new()
 	end
@@ -40,13 +46,5 @@ const function init(): ()
 		run_phase("REACT", delta_time)
 	end)
 end
-
-const scheduler = {}
-
-function scheduler.on(phase: Phase, callback: (delta_time: number) -> ()): Connection
-	return assert(signals[phase], "attempt to connect to unknown scheduler phase"):connect(callback)
-end
-
-init()
 
 return scheduler
