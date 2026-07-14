@@ -1,96 +1,96 @@
 --!strict
 
 const plugin_root = script:FindFirstAncestor("kine")
-const types = require(plugin_root.types)
 const fluid = require(plugin_root.fluid)
 local signal = require(plugin_root.common.signal)
 
-const Window = require(plugin_root.ui.components.Window)
-const WindowContainer = require(plugin_root.ui.components.WindowContainer)
-
 export type WindowContext = {
-	read tool: types.ToolKeyLoose,
-
-	read title: fluid.Source<string>,
+	read name: string,
 
 	read open: fluid.Source<boolean>,
-	read minimized: fluid.Source<boolean>,
 	read active: fluid.Source<boolean>,
+	read focused: fluid.Source<boolean>,
+	read hidden: fluid.Source<boolean>,
+	read animating: fluid.Source<boolean>,
 
 	read position: fluid.Source<vector>,
 	read size: fluid.Source<vector>,
+	read zindex: fluid.Source<number>,
 
 	instance: Frame?,
 
 	read on_close: signal.Signal<>,
+	read on_focus: signal.Signal<>,
+	read on_unfocus: signal.Signal<>,
+	read on_hide: signal.Signal<>,
+	read on_unhide: signal.Signal<>,
 
-	read destroy: (WindowContext) -> (),
 	read request_close: (WindowContext) -> (),
-	read request_minimize: (WindowContext, minimized: boolean) -> (),
-
-	_container_cleanup: (() -> ())?,
+	read request_focus: (WindowContext) -> (),
+	read request_unfocus: (WindowContext) -> (),
+	read request_hide: (WindowContext) -> (),
+	read request_unhide: (WindowContext) -> (),
 }
 
-const function create_container(self: WindowContext): CanvasGroup | Frame
-	assert(self.instance)
-	const container = WindowContainer(true)
-	self.instance.Parent = container
-	return container
-end
-
 const window_context = {}
-
-const function destroy(self: WindowContext): ()
-	const container_cleanup = self._container_cleanup
-	self._container_cleanup = nil
-	const instance = self.instance
-	self.instance = nil
-
-	if container_cleanup then container_cleanup() end
-	if instance then instance:Destroy() end
-end
 
 const function request_close(self: WindowContext): ()
 	-- TODO: some sort of system to block close requests
 	self.open(false)
+	self.active(false)
 	self.on_close:fire()
 end
 
-const function request_minimize(self: WindowContext, minimized: boolean): ()
-	self.minimized(minimized)
+const function request_focus(self: WindowContext): ()
+	self.focused(true)
+	self.active(true)
+	self.on_focus:fire()
 end
 
-function window_context.new(tool: types.ToolKeyLoose): WindowContext
-	const self: WindowContext = {
-		tool = tool,
+const function request_unfocus(self: WindowContext): ()
+	self.focused(false)
+	self.active(false)
+	self.on_unfocus:fire()
+end
 
-		title = fluid.source(""),
+const function request_hide(self: WindowContext): ()
+	self.hidden(true)
+	self.active(false)
+	self.on_hide:fire()
+end
+
+const function request_unhide(self: WindowContext): ()
+	self.hidden(false)
+	self.active(true)
+	self.on_unhide:fire()
+end
+
+function window_context.new(name: string): WindowContext
+	return {
+		name = name,
 
 		open = fluid.source(false),
-		minimized = fluid.source(false),
 		active = fluid.source(false),
+		focused = fluid.source(false),
+		hidden = fluid.source(false),
+		animating = fluid.source(false),
 
 		position = fluid.source(vector.zero),
 		size = fluid.source(vector.one),
-
-		instance = Window {},
+		zindex = fluid.source(0),
 
 		on_close = signal.new(),
+		on_focus = signal.new(),
+		on_unfocus = signal.new(),
+		on_hide = signal.new(),
+		on_unhide = signal.new(),
 
-		destroy = destroy,
 		request_close = request_close,
-		request_minimize = request_minimize,
+		request_focus = request_focus,
+		request_unfocus = request_unfocus,
+		request_hide = request_hide,
+		request_unhide = request_unhide,
 	}
-
-	self._container_cleanup = fluid.root(function()
-		const container = create_container(self)
-
-		fluid.cleanup(function()
-			container:Destroy()
-		end)
-	end)
-
-	return self
 end
 
 return window_context
