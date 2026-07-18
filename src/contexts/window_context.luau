@@ -5,7 +5,7 @@ const fluid = require(plugin_root.fluid)
 local signal = require(plugin_root.common.signal)
 
 export type WindowContext = {
-	read name: string,
+	read id: string,
 
 	read open: fluid.Source<boolean>,
 	read active: fluid.Source<boolean>,
@@ -65,9 +65,9 @@ const function request_unhide(self: WindowContext): ()
 	self.on_unhide:fire()
 end
 
-function window_context.new(name: string): WindowContext
+function window_context.new(id: string): WindowContext
 	return {
-		name = name,
+		id = id,
 
 		open = fluid.source(false),
 		active = fluid.source(false),
