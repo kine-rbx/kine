@@ -2,35 +2,12 @@
 
 const plugin_root = script:FindFirstAncestor("kine")
 const fluid = require(plugin_root.fluid)
-local signal = require(plugin_root.common.signal)
+const signal = require(plugin_root.common.signal)
+const context_types = require(plugin_root.contexts.context_types)
 
-export type WindowContext = {
-	read id: string,
+const Window = require(plugin_root.ui.components.Window)
 
-	read open: fluid.Source<boolean>,
-	read active: fluid.Source<boolean>,
-	read focused: fluid.Source<boolean>,
-	read hidden: fluid.Source<boolean>,
-	read animating: fluid.Source<boolean>,
-
-	read position: fluid.Source<vector>,
-	read size: fluid.Source<vector>,
-	read zindex: fluid.Source<number>,
-
-	instance: Frame?,
-
-	read on_close: signal.Signal<>,
-	read on_focus: signal.Signal<>,
-	read on_unfocus: signal.Signal<>,
-	read on_hide: signal.Signal<>,
-	read on_unhide: signal.Signal<>,
-
-	read request_close: (WindowContext) -> (),
-	read request_focus: (WindowContext) -> (),
-	read request_unfocus: (WindowContext) -> (),
-	read request_hide: (WindowContext) -> (),
-	read request_unhide: (WindowContext) -> (),
-}
+export type WindowContext = context_types.WindowContext
 
 const window_context = {}
 
@@ -66,7 +43,7 @@ const function request_unhide(self: WindowContext): ()
 end
 
 function window_context.new(id: string): WindowContext
-	return {
+	const context: WindowContext = {
 		id = id,
 
 		open = fluid.source(false),
@@ -90,7 +67,13 @@ function window_context.new(id: string): WindowContext
 		request_unfocus = request_unfocus,
 		request_hide = request_hide,
 		request_unhide = request_unhide,
+	} :: WindowContext
+
+	context.instance = Window {
+		WindowContext = context,
 	}
+
+	return context
 end
 
 return window_context

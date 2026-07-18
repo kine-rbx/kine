@@ -6,8 +6,6 @@ const global = require(plugin_root.global)
 const fluid = require(plugin_root.fluid)
 const window_context = require(plugin_root.contexts.window_context)
 
-const Window = require(plugin_root.ui.components.Window)
-
 export type Window = {
 	read tool: types.ToolKeyLoose,
 
@@ -36,7 +34,7 @@ const function focus(self: Window): ()
 		const context = window.context
 		if context then
 			context:request_unfocus()
-			context.zindex(index)
+			context.index(index)
 		end
 	end
 end
@@ -51,15 +49,10 @@ const function register(self: Window, callback: (window_context.WindowContext) -
 		context.animating(true)
 		context.focused(true)
 
-		const instance = Window {
-			WindowContext = context,
-		}
-		instance.Parent = gui
-
 		fluid.cleanup(function()
 			self._cleanup = nil
 			self.context = nil
-			instance:Destroy()
+			context.instance:Destroy()
 		end)
 
 		context.on_close:once(cleanup)
@@ -67,6 +60,7 @@ const function register(self: Window, callback: (window_context.WindowContext) -
 			focus(self)
 		end)
 
+		context.instance.Parent = gui
 		context.open(true)
 
 		task.defer(callback, context)

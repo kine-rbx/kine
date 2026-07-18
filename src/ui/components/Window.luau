@@ -2,9 +2,9 @@
 
 const plugin_root = script:FindFirstAncestor("kine")
 const fluid = require(plugin_root.fluid)
-const window_context = require(plugin_root.contexts.window_context)
+const context_types = require(plugin_root.contexts.context_types)
 
-const create_animated_container = function(context: window_context.WindowContext): CanvasGroup | Frame
+const create_animated_container = function(context: context_types.WindowContext): CanvasGroup | Frame
 	print(context.animating())
 	if context.animating() then
 		return fluid.create("CanvasGroup") {
@@ -22,23 +22,21 @@ const create_animated_container = function(context: window_context.WindowContext
 end
 
 return function(props: {
-	WindowContext: window_context.WindowContext,
+	WindowContext: context_types.WindowContext,
 }): Frame
 	const context = props.WindowContext
-
-	local cleanup_animated_container: (() -> ())?
 
 	const container = fluid.create("Frame") { -- TODO: replace with panel
 		Name = "Container",
 
 		Size = UDim2.fromScale(1, 1),
 	}
-	context.instance = container
+	context.container = container
 
 	return fluid.create("Frame") {
-		Name = context.name,
+		Name = context.id,
 
-		ZIndex = context.zindex,
+		ZIndex = context.index,
 
 		Position = fluid.derive(function()
 			const value = context.position()
@@ -52,6 +50,8 @@ return function(props: {
 		BackgroundTransparency = 1,
 
 		fluid.action(function(instance)
+			local cleanup_animated_container: (() -> ())?
+
 			fluid.effect(function()
 				if cleanup_animated_container then cleanup_animated_container() end
 
