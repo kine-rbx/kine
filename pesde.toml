@@ -27,4 +27,4 @@ scripts = { name = "pesde/scripts_rojo", version = "^0.2.0", target = "lune" }
 rojo = { name = "pesde/rojo", version = "^7.5.1", target = "lune" }
 
 [dependencies]
-fluid = { wally = "ffrostfall/fluid", version = "^0.6.4" }
+fluid = { wally = "ffrostfall/fluid", version = "^0.6.5" }
